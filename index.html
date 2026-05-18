@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CESFACT · Guía Técnica de Desarrollo Completa</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:#1a1a2e;background:#f4f6f9;}
+.cover{background:linear-gradient(135deg,#0d3349 0%,#1a5276 60%,#145a32 100%);color:white;padding:80px 60px;text-align:center;}
+.cover h1{font-size:38px;font-weight:800;margin-bottom:12px;}
+.cover h2{font-size:22px;font-weight:400;opacity:.85;margin-bottom:30px;}
+.cover p{font-size:14px;opacity:.75;max-width:700px;margin:0 auto 30px;line-height:1.6;}
+.cover .badges{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.cover .badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:6px 18px;border-radius:20px;font-size:12px;}
+.toc-page{background:white;padding:60px;page-break-after:always;}
+.toc-page h1{font-size:28px;color:#0d3349;border-bottom:3px solid #1a5276;padding-bottom:12px;margin-bottom:30px;}
+.toc-row{display:flex;padding:7px 0;border-bottom:1px dotted #dee2e6;font-size:12px;}
+.toc-num{min-width:55px;font-weight:700;color:#1a5276;}
+.toc-text{flex:1;color:#2c3e50;}
+.toc-sub{padding-left:20px;}
+.toc-sub .toc-num{color:#0e6655;}
+.page{background:white;max-width:1200px;margin:0 auto;}
+.sec{padding:50px 60px;border-bottom:3px solid #f0f2f5;}
+.sec:last-child{border-bottom:none;}
+h1.sh{font-size:28px;font-weight:700;color:#0d3349;border-left:6px solid #1a5276;padding-left:18px;margin-bottom:28px;}
+h2.sh2{font-size:20px;font-weight:600;color:#1a5276;margin:32px 0 14px;padding-bottom:7px;border-bottom:2px solid #e8f4f8;}
+h3.sh3{font-size:15px;font-weight:600;color:#145a32;margin:22px 0 10px;}
+h4.sh4{font-size:13px;font-weight:600;color:#333;margin:16px 0 8px;border-left:3px solid #0e6655;padding-left:8px;}
+p{line-height:1.75;margin-bottom:12px;color:#2c3e50;}
+strong{color:#0d3349;}
+.warning{background:#fef3cd;border:1px solid #ffc107;border-left:4px solid #ffc107;padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;}
+.warning p{margin:0;font-size:12px;}
+.info{background:#e8f4f8;border-left:4px solid #1a5276;padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;}
+.info p{margin:0;font-size:12px;}
+.success{background:#e8f8f5;border-left:4px solid #0e6655;padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;}
+.success p{margin:0;font-size:12px;}
+.danger{background:#fdf0f0;border-left:4px solid #c0392b;padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;}
+.danger p{margin:0;font-size:12px;}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px;}
+table th{background:#0d3349;color:white;padding:9px 14px;text-align:left;font-weight:600;}
+table td{padding:8px 14px;border-bottom:1px solid #dee2e6;vertical-align:top;line-height:1.5;}
+table tr:nth-child(even) td{background:#f8f9fa;}
+table tr:hover td{background:#e8f4f8;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0;}
+.card{border:1px solid #dee2e6;border-radius:10px;padding:16px;background:white;}
+.card h3{font-size:13px;font-weight:600;margin-bottom:8px;}
+.card p{font-size:11px;color:#555;margin:0;line-height:1.5;}
+.card.blue{border-left:4px solid #1a5276;}
+.card.green{border-left:4px solid #0e6655;}
+.card.amber{border-left:4px solid #d4a017;}
+.card.red{border-left:4px solid #c0392b;}
+.card.purple{border-left:4px solid #6c3483;}
+.card.gray{border-left:4px solid #888;}
+.spec-box{border:1px solid #dee2e6;border-radius:10px;overflow:hidden;margin:14px 0;}
+.spec-header{background:#1a5276;color:white;padding:10px 16px;font-size:13px;font-weight:600;}
+.spec-header.green{background:#0e6655;}
+.spec-header.amber{background:#b7770d;}
+.spec-header.red{background:#a93226;}
+.spec-header.purple{background:#6c3483;}
+.spec-header.dark{background:#0d3349;}
+.spec-body{padding:14px 16px;}
+.field-row{display:flex;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px solid #f0f0f0;}
+.field-name{font-family:monospace;font-size:11px;font-weight:600;color:#c0392b;min-width:160px;flex-shrink:0;}
+.field-type{font-size:10px;background:#f0f0f0;padding:1px 6px;border-radius:4px;font-family:monospace;color:#555;flex-shrink:0;height:fit-content;margin-top:1px;}
+.field-desc{font-size:11px;color:#555;flex:1;line-height:1.5;}
+code{font-family:'Courier New',monospace;font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:3px;color:#c0392b;}
+.code-block{background:#0d1117;color:#c9d1d9;padding:18px 20px;border-radius:8px;margin:12px 0;overflow-x:auto;line-height:1.65;font-family:'Courier New',monospace;font-size:11px;}
+.code-block .kw{color:#ff7b72;}
+.code-block .fn{color:#d2a8ff;}
+.code-block .st{color:#a5d6ff;}
+.code-block .cm{color:#8b949e;font-style:italic;}
+.code-block .num{color:#79c0ff;}
+.code-block .key{color:#79c0ff;}
+.rule{display:flex;gap:10px;padding:8px 12px;background:#f8f9fa;border-radius:6px;margin:6px 0;font-size:12px;align-items:flex-start;}
+.rule-num{font-weight:700;color:#1a5276;min-width:28px;flex-shrink:0;}
+.rule-text{line-height:1.5;color:#333;}
+.screen-spec{border:2px solid #1a5276;border-radius:10px;overflow:hidden;margin:16px 0;}
+.screen-title{background:#1a5276;color:white;padding:8px 16px;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:space-between;}
+.screen-body{padding:14px 16px;}
+.ui-element{border:1px solid #dee2e6;border-radius:6px;padding:8px 12px;margin:6px 0;font-size:11px;background:white;}
+.ui-element .el-name{font-weight:600;color:#0d3349;margin-bottom:3px;}
+.ui-element .el-desc{color:#555;line-height:1.5;}
+.flow-step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start;}
+.flow-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;}
+.flow-content h4{font-size:12px;font-weight:600;margin:0 0 3px;color:#0d3349;}
+.flow-content p{font-size:11px;color:#555;margin:0;line-height:1.5;}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;}
+.bgreen{background:#e8f8f5;color:#085041;}
+.bblue{background:#e6f1fb;color:#0c447c;}
+.bamber{background:#faeeda;color:#412402;}
+.bred{background:#ffebeb;color:#6b1010;}
+.bgray{background:#f0f0f0;color:#555;}
+.bpurple{background:#eeedfe;color:#3b33a0;}
+.bdark{background:#0d3349;color:white;}
+.kpi-mini{border:1px solid #dee2e6;border-radius:8px;padding:12px;text-align:center;}
+.kpi-mini .val{font-size:24px;font-weight:700;line-height:1;margin:4px 0;}
+.kpi-mini .lbl{font-size:10px;color:#666;}
+ul.cl{list-style:none;padding:0;margin:8px 0;}
+ul.cl li{padding:4px 0 4px 22px;position:relative;font-size:12px;line-height:1.5;color:#333;}
+ul.cl li::before{content:'✓';position:absolute;left:0;color:#0e6655;font-weight:700;}
+ul.cl.x li::before{content:'✗';color:#c0392b;}
+ul.cl.arr li::before{content:'→';color:#1a5276;}
+ul.cl.dot li::before{content:'•';color:#888;}
+.phase-bar{display:flex;border-radius:8px;overflow:hidden;margin:14px 0;}
+.phase-step{flex:1;padding:12px;text-align:center;color:white;}
+.phase-step .pn{font-size:20px;font-weight:700;}
+.phase-step .pl{font-size:10px;opacity:.85;margin-top:3px;}
+hr.div{border:none;border-top:2px solid #e8f4f8;margin:28px 0;}
+.endpoint{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start;}
+.method{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:monospace;flex-shrink:0;margin-top:2px;}
+.mget{background:#e6f1fb;color:#0c447c;}
+.mpost{background:#faeeda;color:#412402;}
+.mput{background:#eeedfe;color:#3b33a0;}
+.ep-right h4{font-family:monospace;font-size:11px;font-weight:600;color:#0d3349;margin:0 0 3px;}
+.ep-right p{font-size:11px;color:#555;margin:0;line-height:1.5;}
+footer{background:#0d3349;color:rgba(255,255,255,.7);padding:30px 60px;text-align:center;font-size:11px;}
+@media print{.sec{page-break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="cover">
+<h1>CESFACT · Plataforma de Automatización de Cobranza</h1>
+<h2>Guía Técnica de Desarrollo — Módulo 1 Completo</h2>
+<p>Especificación funcional y técnica completa para el desarrollo de la plataforma. Incluye pantallas, reglas de negocio, modelos de datos, flujos, integraciones y criterios de aceptación por módulo y submódulo. Documento dirigido al equipo de desarrollo y a IA generativa de código.</p>
+<div class="badges">
+  <span class="badge">Cessio Factoring Cía. Ltda. · Ecuador</span>
+  <span class="badge">JPADigital Solutions / Transformación ExO</span>
+  <span class="badge">Stack: Python 3.12 + FastAPI + PostgreSQL 15 + React 18</span>
+  <span class="badge">Mayo 2026 · Versión para Desarrollo</span>
+</div></div>
+<div class="toc-page"><h1>Índice del Documento</h1>
+<div class="toc-row"><span class="toc-num">1.</span><span class="toc-text"><strong>Arquitectura General y Principios de Diseño</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">1.1</span><span class="toc-text">Stack tecnológico y decisiones de arquitectura</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">1.2</span><span class="toc-text">Los tres canales de integración con Cessio.Net</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">1.3</span><span class="toc-text">Modelo de datos central — entidades y relaciones</span></div>
+<div class="toc-row"><span class="toc-num">2.</span><span class="toc-text"><strong>Módulo 8 — Usuarios y Seguridad (desarrollar primero)</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">2.1</span><span class="toc-text">Los 6 roles y su lógica de permisos</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">2.2</span><span class="toc-text">Autenticación JWT — flujo completo</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">2.3</span><span class="toc-text">Middleware RBAC — verificación por endpoint</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">2.4</span><span class="toc-text">Bitácora de auditoría</span></div>
+<div class="toc-row"><span class="toc-num">3.</span><span class="toc-text"><strong>Módulo 1 — Dashboard y Control Operativo</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">3.1</span><span class="toc-text">Vista Asistente — bandeja de trabajo personalizada</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">3.2</span><span class="toc-text">Vista Supervisor — cartera del equipo y rendimiento</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">3.3</span><span class="toc-text">Vista Gerencia — KPIs ejecutivos y madurez de cartera</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">3.4</span><span class="toc-text">Panel de rendimiento por gestor (solo Supervisor)</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">3.5</span><span class="toc-text">Cola de escalamientos (solo Supervisor) — 4 tipos</span></div>
+<div class="toc-row"><span class="toc-num">4.</span><span class="toc-text"><strong>Módulo 2 — Clasificación Automática de Cartera</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">4.1</span><span class="toc-text">Motor de clasificación — 6 tramos y reglas</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">4.2</span><span class="toc-text">Sistema de prioridad interna — baja / media / alta</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">4.3</span><span class="toc-text">Regla de múltiples facturas por operación</span></div>
+<div class="toc-row"><span class="toc-num">5.</span><span class="toc-text"><strong>Módulo 3 — Gestión de Cobranza</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">5.1</span><span class="toc-text">Registro de gestiones — 5 tipos y 5 resultados</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">5.2</span><span class="toc-text">Branching logic — qué se crea automáticamente</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">5.3</span><span class="toc-text">Regla anti-hostigamiento — implementación técnica</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">5.4</span><span class="toc-text">Sincronización hacia Cessio.Net post-registro</span></div>
+<div class="toc-row"><span class="toc-num">6.</span><span class="toc-text"><strong>Módulo 4 — Promesas y Acuerdos de Pago</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">6.1</span><span class="toc-text">Promesa simple — ciclo completo</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">6.2</span><span class="toc-text">Acuerdo formal — plan de cuotas con aprobación GG</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">6.3</span><span class="toc-text">Job nocturno de verificación de promesas</span></div>
+<div class="toc-row"><span class="toc-num">7.</span><span class="toc-text"><strong>Módulo 5 — Motor Financiero</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">7.1</span><span class="toc-text">Tres tipos de liquidación — fórmulas y ejemplos</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">7.2</span><span class="toc-text">Notas de descuento — flujo con aprobación GG</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">7.3</span><span class="toc-text">Orden de aplicación de abonos</span></div>
+<div class="toc-row"><span class="toc-num">8.</span><span class="toc-text"><strong>Módulo 6 — Notificaciones Automáticas</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">8.1</span><span class="toc-text">Catálogo completo — 5 notificaciones externas + 5 internas</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">8.2</span><span class="toc-text">Cola asíncrona — retry con backoff exponencial</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">8.3</span><span class="toc-text">Plantillas — Anexo 1 y Anexo 2</span></div>
+<div class="toc-row"><span class="toc-num">9.</span><span class="toc-text"><strong>Módulo 7 — Flujos y Aprobaciones</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">9.1</span><span class="toc-text">Los 5 tipos de aprobación — flujo y consecuencias</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">9.2</span><span class="toc-text">Bandeja de aprobaciones por rol</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">9.3</span><span class="toc-text">Intensificación 61-90d — wizard 4 pasos</span></div>
+<div class="toc-row"><span class="toc-num">10.</span><span class="toc-text"><strong>Módulo 9 (nuevo) — Integración Contifico</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">10.1</span><span class="toc-text">Flujo completo post-pago — 8 pasos automatizados</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">10.2</span><span class="toc-text">Payload exacto a Contifico por tipo de liquidación</span></div>
+<div class="toc-row"><span class="toc-num">11.</span><span class="toc-text"><strong>Módulo 10 (nuevo) — Portal Legal Externo</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">11.1</span><span class="toc-text">Vista del estudio externo — acceso restringido</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">11.2</span><span class="toc-text">Vista interna CESFACT — panel de supervisión judicial</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">11.3</span><span class="toc-text">Alertas de inactividad — configuración y disparo</span></div>
+<div class="toc-row"><span class="toc-num">12.</span><span class="toc-text"><strong>Inteligencia Artificial — 6 puntos de integración</strong></span></div>
+<div class="toc-row toc-sub"><span class="toc-num">12.1</span><span class="toc-text">Scoring de comportamiento — query SQL y modelo</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">12.2</span><span class="toc-text">Predicción de mora — modelo de reglas ponderadas</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">12.3</span><span class="toc-text">Asistente conversacional — prompts por rol</span></div>
+<div class="toc-row toc-sub"><span class="toc-num">12.4</span><span class="toc-text">Narrativa automática del Informe de Directorio</span></div>
+<div class="toc-row"><span class="toc-num">13.</span><span class="toc-text"><strong>Integración API REST con Cessio.Net — Especificación completa</strong></span></div>
+<div class="toc-row"><span class="toc-num">14.</span><span class="toc-text"><strong>Acceso PostgreSQL directo — Queries analíticas</strong></span></div>
+<div class="toc-row"><span class="toc-num">15.</span><span class="toc-text"><strong>Sistema de Webhooks — 6 eventos y cadenas de reacción</strong></span></div>
+<div class="toc-row"><span class="toc-num">16.</span><span class="toc-text"><strong>Plan de fases de desarrollo — orden y dependencias</strong></span></div>
+</div>
+<div class="page">
+<div class="sec">
+<h1 class="sh">1. Arquitectura General y Principios de Diseño</h1>
+
+<h2 class="sh2">1.1 Stack tecnológico y decisiones de arquitectura</h2>
+<p>La plataforma opera bajo el patrón <strong>System of Engagement sobre System of Record</strong>. Cessio.Net es la fuente de verdad. La plataforma CESFACT orquesta gestión, automatización y reglas sin duplicar ni reemplazar el sistema master.</p>
+
+<table>
+<tr><th>Componente</th><th>Tecnología</th><th>Justificación</th></tr>
+<tr><td>Backend API</td><td><code>Python 3.12 + FastAPI</code></td><td>Mismo lenguaje que Cessio.Net → integración nativa sin adaptadores</td></tr>
+<tr><td>Base de datos</td><td><code>PostgreSQL 15</code> con JSONB y particionado</td><td>Mismo motor que Cessio.Net → acceso SQL directo (Canal 2)</td></tr>
+<tr><td>Frontend</td><td><code>React 18 + Vite</code></td><td>Dashboard dinámico con actualizaciones en tiempo real vía WebSocket</td></tr>
+<tr><td>Cache / sesiones</td><td><code>Redis</code></td><td>JWT refresh tokens, colas de notificaciones, caché de KPIs</td></tr>
+<tr><td>Tareas asíncronas</td><td><code>Celery + Redis</code> o Cloud Tasks</td><td>Jobs nocturnos, reintentos de notificaciones, clasificación automática</td></tr>
+<tr><td>Automatización no-code</td><td><code>Make.com</code></td><td>Flujos Contifico, webhooks entrantes, orquestación sin código</td></tr>
+<tr><td>Notificaciones email</td><td>SMTP corporativo Microsoft 365</td><td>Ya disponible en CESFACT</td></tr>
+<tr><td>Notificaciones WhatsApp</td><td>WhatsApp Business API vía BSP</td><td>Mensajes preventivos y comprobantes automáticos</td></tr>
+<tr><td>Autenticación</td><td>JWT + RBAC granular</td><td>Access token 15 min, refresh 24h, invalida en Redis</td></tr>
+<tr><td>Proxy BD</td><td>PgBouncer</td><td>Connection pooling para acceso analítico Canal 2</td></tr>
+<tr><td>Despliegue</td><td>Docker + CI/CD</td><td>Contenedores, entornos dev/QA/producción</td></tr>
+</table>
+
+<h2 class="sh2">1.2 Los tres canales de integración con Cessio.Net</h2>
+<div class="warning"><p><strong>CRÍTICO para el desarrollo:</strong> El Canal 2 (SQL directo) solo es posible porque Cessio.Net usa PostgreSQL. La latencia analítica es 1000× menor que vía API. Usarlo para todos los dashboards, KPIs y scoring IA. Usar el Canal 1 (API) solo para operaciones transaccionales (lectura puntual + escritura).</p></div>
+
+<div class="spec-box">
+<div class="spec-header dark">Canal 1 — API REST JWT · Bidireccional · Latencia ~150-300ms</div>
+<div class="spec-body">
+<p><strong>Propósito:</strong> Operaciones transaccionales. Lee datos puntuales de operaciones, facturas, clientes. Escribe gestiones, promesas, estados, descuentos aprobados.</p>
+<p><strong>Implementación:</strong> Capa de abstracción en <code>services/cessio_api.py</code>. Toda llamada pasa por esta capa — nunca llamar directamente desde los controllers.</p>
+<div class="code-block"><span class="cm"># services/cessio_api.py — estructura base</span>
+<span class="kw">import</span> httpx, hmac, hashlib
+<span class="kw">from</span> tenacity <span class="kw">import</span> retry, stop_after_attempt, wait_exponential
+
+<span class="kw">class</span> CessioNetClient:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, base_url: str, client_id: str, secret: str):
+        self.base_url = base_url
+        self._token = <span class="kw">None</span>
+    
+    <span class="cm"># Renovar token automáticamente</span>
+    <span class="kw">async def</span> <span class="fn">_ensure_token</span>(self):
+        <span class="kw">if</span> self._token_expires &lt; datetime.now():
+            <span class="kw">await</span> self._refresh_token()
+    
+    @retry(stop=stop_after_attempt(<span class="num">4</span>),
+           wait=wait_exponential(multiplier=<span class="num">1</span>, min=<span class="num">1</span>, max=<span class="num">8</span>))
+    <span class="kw">async def</span> <span class="fn">post_gestion</span>(self, op_id: str, data: dict,
+                            idempotency_key: str):
+        headers = {
+            <span class="st">"Authorization"</span>: <span class="fn">f</span><span class="st">"Bearer {self._token}"</span>,
+            <span class="st">"Idempotency-Key"</span>: idempotency_key,
+            <span class="st">"Content-Type"</span>: <span class="st">"application/json"</span>
+        }
+        <span class="cm"># Log antes de la llamada</span>
+        <span class="kw">await</span> self._log_request(<span class="st">"POST"</span>, <span class="fn">f</span><span class="st">"/operaciones/{op_id}/gestiones"</span>)
+        resp = <span class="kw">await</span> httpx.post(..., headers=headers, json=data)
+        <span class="cm"># Log del resultado</span>
+        <span class="kw">await</span> self._log_response(resp.status_code, resp.elapsed.ms)</div>
+</div></div>
+
+<div class="spec-box" style="margin-top:12px;">
+<div class="spec-header green">Canal 2 — PostgreSQL Directo · Solo lectura · Latencia ~8-20ms</div>
+<div class="spec-body">
+<p><strong>Propósito:</strong> Analytics, KPIs, scoring IA, Informe de Directorio. NUNCA para escritura. Usuario <code>cesfact_analytics</code> tiene REVOKE ALL + GRANT SELECT específico.</p>
+<p><strong>Cuándo usar Canal 2 vs Canal 1:</strong></p>
+<table>
+<tr><th>Usar Canal 2 (SQL)</th><th>Usar Canal 1 (API)</th></tr>
+<tr><td>Dashboard KPIs (% vencida, totales)</td><td>Ficha de cliente específico</td></tr>
+<tr><td>Reporte de madurez de cartera</td><td>Detalle de una operación individual</td></tr>
+<tr><td>Scoring de comportamiento por cliente</td><td>Escritura: gestiones, promesas, estados</td></tr>
+<tr><td>Predicción de mora (D-8)</td><td>Verificar saldo antes de liquidar</td></tr>
+<tr><td>Informe de Directorio (período completo)</td><td>Garantías de una operación específica</td></tr>
+<tr><td>Métricas de rendimiento por gestor</td><td>Movimientos cronológicos de una op.</td></tr>
+</table>
+<div class="code-block"><span class="cm"># services/analytics.py — conexión Canal 2</span>
+<span class="kw">import</span> asyncpg
+
+CESSIO_ANALYTICS_DSN = <span class="st">"postgresql://cesfact_analytics:[pwd]@pg-cessio.internal:6432/cessio"</span>
+
+<span class="kw">class</span> AnalyticsDB:
+    pool: asyncpg.Pool = <span class="kw">None</span>
+    
+    <span class="kw">async def</span> <span class="fn">connect</span>(self):
+        <span class="cm"># max 5 conexiones — usuario tiene CONNECTION LIMIT 5</span>
+        self.pool = <span class="kw">await</span> asyncpg.create_pool(
+            CESSIO_ANALYTICS_DSN, min_size=<span class="num">1</span>, max_size=<span class="num">5</span>
+        )
+    
+    <span class="kw">async def</span> <span class="fn">get_madurez_cartera</span>(self) -> list[dict]:
+        <span class="kw">async with</span> self.pool.acquire() <span class="kw">as</span> conn:
+            <span class="kw">return await</span> conn.fetch(QUERY_MADUREZ)</div>
+</div></div>
+
+<div class="spec-box" style="margin-top:12px;">
+<div class="spec-header purple">Canal 3 — Webhooks · Eventos push · Latencia &lt;1s (HTTP) o &lt;100ms (PG NOTIFY)</div>
+<div class="spec-body">
+<p><strong>Propósito:</strong> Cessio.Net notifica a la plataforma cuando ocurren eventos clave (pago registrado, operación nueva, estado cambiado). La plataforma reacciona automáticamente.</p>
+<p><strong>Tres opciones de implementación (decidir en Fase 1 según lo que soporte Cessio.Net):</strong></p>
+<table>
+<tr><th>Opción</th><th>Latencia</th><th>Req. Cessio.Net</th><th>Recomendación</th></tr>
+<tr><td><strong>A — HTTP Webhook</strong></td><td>&lt;1 segundo</td><td>Sistema webhook HTTP saliente</td><td><span class="badge bgreen">Primaria</span> si disponible</td></tr>
+<tr><td><strong>B — PG LISTEN/NOTIFY</strong></td><td>&lt;100ms</td><td>Triggers PG + Canal 2 activo</td><td><span class="badge bblue">Mejor</span> si técnicamente viable</td></tr>
+<tr><td><strong>C — Polling</strong></td><td>2-5 minutos</td><td>Solo GET con timestamp</td><td><span class="badge bgray">Fallback</span> siempre disponible</td></tr>
+</table>
+<div class="code-block"><span class="cm"># Endpoint webhook receptor (opción A)</span>
+<span class="cm"># routers/webhooks.py</span>
+@router.post(<span class="st">"/webhooks/cessio/{event_type}"</span>)
+<span class="kw">async def</span> <span class="fn">receive_webhook</span>(
+    event_type: str,
+    request: Request,
+    background_tasks: BackgroundTasks
+):
+    payload = <span class="kw">await</span> request.body()
+    signature = request.headers.get(<span class="st">"X-Cessio-Signature"</span>)
+    
+    <span class="cm"># 1. Verificar firma HMAC-SHA256 ANTES de procesar</span>
+    <span class="kw">if not</span> <span class="fn">verify_hmac</span>(payload, signature, CESSIO_WEBHOOK_SECRET):
+        <span class="kw">raise</span> HTTPException(<span class="num">401</span>, <span class="st">"Invalid signature"</span>)
+    
+    <span class="cm"># 2. Responder 200 inmediatamente (antes de procesar)</span>
+    <span class="cm"># 3. Procesar en background</span>
+    background_tasks.add_task(
+        process_webhook_event, event_type, <span class="fn">json.loads</span>(payload)
+    )
+    <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"received"</span>}
+
+<span class="cm"># Opción B — PG LISTEN/NOTIFY</span>
+<span class="kw">async def</span> <span class="fn">listen_cessio_events</span>():
+    conn = <span class="kw">await</span> asyncpg.connect(CESSIO_ANALYTICS_DSN)
+    <span class="kw">await</span> conn.add_listener(<span class="st">"pago_registrado"</span>, handle_pago_event)
+    <span class="kw">await</span> conn.add_listener(<span class="st">"operacion_vencida"</span>, handle_vencida_event)
+    <span class="cm"># Mantener conexión persistente</span></div>
+</div></div>
+
+<h2 class="sh2">1.3 Modelo de datos central — entidades principales</h2>
+<div class="warning"><p><strong>Nota de desarrollo:</strong> Las entidades de Cessio.Net (operaciones, facturas, pagos, clientes) NO se replican en la base de datos de la plataforma. Se leen en tiempo real desde Cessio.Net. La plataforma solo persiste lo que es exclusivo de ella: gestiones, promesas, aprobaciones, historial de notificaciones, configuración de roles.</p></div>
+
+<div class="g2">
+<div class="spec-box">
+<div class="spec-header">Tabla: gestiones</div>
+<div class="spec-body">
+<div class="field-row"><span class="field-name">id</span><span class="field-type">UUID PK</span><span class="field-desc">Identificador único de la gestión</span></div>
+<div class="field-row"><span class="field-name">operacion_id</span><span class="field-type">VARCHAR FK→Cessio</span><span class="field-desc">ID de la operación en Cessio.Net (no FK real — referencia externa)</span></div>
+<div class="field-row"><span class="field-name">cliente_id</span><span class="field-type">VARCHAR</span><span class="field-desc">RUC o ID del cliente en Cessio.Net</span></div>
+<div class="field-row"><span class="field-name">gestor_id</span><span class="field-type">UUID FK→usuarios</span><span class="field-desc">Usuario que registró la gestión</span></div>
+<div class="field-row"><span class="field-name">tipo</span><span class="field-type">ENUM</span><span class="field-desc">llamada | email | whatsapp | visita | observacion</span></div>
+<div class="field-row"><span class="field-name">resultado</span><span class="field-type">ENUM</span><span class="field-desc">contacto_efectivo | sin_contacto | prometio_pago | solicito_liquidacion | requiere_escalamiento</span></div>
+<div class="field-row"><span class="field-name">notas</span><span class="field-type">TEXT</span><span class="field-desc">Notas libres del gestor</span></div>
+<div class="field-row"><span class="field-name">proxima_accion</span><span class="field-type">VARCHAR(100)</span><span class="field-desc">Descripción de la próxima acción a tomar</span></div>
+<div class="field-row"><span class="field-name">fecha_proxima</span><span class="field-type">DATE</span><span class="field-desc">Fecha programada para la próxima acción</span></div>
+<div class="field-row"><span class="field-name">cuenta_como_contacto</span><span class="field-type">BOOLEAN</span><span class="field-desc">True para todos los tipos excepto 'observacion'</span></div>
+<div class="field-row"><span class="field-name">cesado_por_antihosting</span><span class="field-type">BOOLEAN</span><span class="field-desc">True si fue bloqueada por la regla de 1 contacto/día</span></div>
+<div class="field-row"><span class="field-name">enviado_cessio</span><span class="field-type">BOOLEAN</span><span class="field-desc">True si ya fue sincronizada hacia Cessio.Net vía API</span></div>
+<div class="field-row"><span class="field-name">idempotency_key</span><span class="field-type">UUID</span><span class="field-desc">Clave única para idempotencia al escribir en Cessio.Net</span></div>
+<div class="field-row"><span class="field-name">created_at</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">Timestamp UTC de creación (automático)</span></div>
+</div></div>
+
+<div class="spec-box">
+<div class="spec-header green">Tabla: promesas_pago</div>
+<div class="spec-body">
+<div class="field-row"><span class="field-name">id</span><span class="field-type">UUID PK</span><span class="field-desc">Identificador único</span></div>
+<div class="field-row"><span class="field-name">operacion_id</span><span class="field-type">VARCHAR</span><span class="field-desc">Referencia a Cessio.Net</span></div>
+<div class="field-row"><span class="field-name">cliente_id</span><span class="field-type">VARCHAR</span><span class="field-desc">RUC o ID del cliente</span></div>
+<div class="field-row"><span class="field-name">gestor_id</span><span class="field-type">UUID FK→usuarios</span><span class="field-desc">Quien creó la promesa</span></div>
+<div class="field-row"><span class="field-name">tipo</span><span class="field-type">ENUM</span><span class="field-desc">simple | acuerdo_formal</span></div>
+<div class="field-row"><span class="field-name">monto_prometido</span><span class="field-type">DECIMAL(12,2)</span><span class="field-desc">Monto que el cliente prometió pagar</span></div>
+<div class="field-row"><span class="field-name">fecha_compromiso</span><span class="field-type">DATE</span><span class="field-desc">Fecha en que prometió pagar</span></div>
+<div class="field-row"><span class="field-name">cumplida</span><span class="field-type">BOOLEAN</span><span class="field-desc">NULL=pendiente, TRUE=cumplida, FALSE=rota</span></div>
+<div class="field-row"><span class="field-name">fecha_cumplimiento</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">Cuando se registró el pago (si cumplida=TRUE)</span></div>
+<div class="field-row"><span class="field-name">aprobacion_id</span><span class="field-type">UUID FK→aprobaciones</span><span class="field-desc">Solo si tipo=acuerdo_formal</span></div>
+<div class="field-row"><span class="field-name">cuotas</span><span class="field-type">JSONB</span><span class="field-desc">Array de cuotas [{num, fecha, monto, pagada}] — solo acuerdo_formal</span></div>
+<div class="field-row"><span class="field-name">bloquear_nuevas_ops</span><span class="field-type">BOOLEAN</span><span class="field-desc">Si TRUE, bloquea nuevas operaciones al cliente hasta cumplimiento</span></div>
+</div></div>
+</div>
+
+<div class="g2">
+<div class="spec-box">
+<div class="spec-header amber">Tabla: aprobaciones</div>
+<div class="spec-body">
+<div class="field-row"><span class="field-name">id</span><span class="field-type">UUID PK</span><span class="field-desc">Identificador único</span></div>
+<div class="field-row"><span class="field-name">tipo</span><span class="field-type">ENUM</span><span class="field-desc">carta_formal | nota_descuento | intensificacion | acuerdo_pago | inicio_legal</span></div>
+<div class="field-row"><span class="field-name">operacion_id</span><span class="field-type">VARCHAR</span><span class="field-desc">Referencia a Cessio.Net</span></div>
+<div class="field-row"><span class="field-name">solicitante_id</span><span class="field-type">UUID FK→usuarios</span><span class="field-desc">Quien solicitó la aprobación</span></div>
+<div class="field-row"><span class="field-name">aprobador_requerido</span><span class="field-type">ENUM</span><span class="field-desc">jefe_operaciones | gerencia_general</span></div>
+<div class="field-row"><span class="field-name">estado</span><span class="field-type">ENUM</span><span class="field-desc">pendiente | aprobado | rechazado | modificado | mas_info</span></div>
+<div class="field-row"><span class="field-name">aprobador_id</span><span class="field-type">UUID FK→usuarios</span><span class="field-desc">Quien tomó la decisión (NULL si pendiente)</span></div>
+<div class="field-row"><span class="field-name">payload_solicitud</span><span class="field-type">JSONB</span><span class="field-desc">Datos específicos de la solicitud (liquidación, acciones propuestas, cuotas, etc.)</span></div>
+<div class="field-row"><span class="field-name">condiciones</span><span class="field-type">TEXT</span><span class="field-desc">Condiciones o motivo de la decisión</span></div>
+<div class="field-row"><span class="field-name">firma_digital</span><span class="field-type">TEXT</span><span class="field-desc">Hash de la decisión con timestamp — registro inmutable</span></div>
+<div class="field-row"><span class="field-name">decided_at</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">Timestamp UTC de la decisión</span></div>
+</div></div>
+
+<div class="spec-box">
+<div class="spec-header red">Tabla: escalamientos</div>
+<div class="spec-body">
+<div class="field-row"><span class="field-name">id</span><span class="field-type">UUID PK</span><span class="field-desc">Identificador único</span></div>
+<div class="field-row"><span class="field-name">tipo</span><span class="field-type">ENUM</span><span class="field-desc">automatico_tramo | manual_evasion | alerta_frecuencia | anticipado_riesgo</span></div>
+<div class="field-row"><span class="field-name">operacion_id</span><span class="field-type">VARCHAR</span><span class="field-desc">Referencia a Cessio.Net</span></div>
+<div class="field-row"><span class="field-name">gestor_origen_id</span><span class="field-type">UUID FK→usuarios</span><span class="field-desc">Asistente que originó el caso</span></div>
+<div class="field-row"><span class="field-name">supervisor_id</span><span class="field-type">UUID FK→usuarios</span><span class="field-desc">Supervisor asignado para resolver</span></div>
+<div class="field-row"><span class="field-name">motivo</span><span class="field-type">TEXT</span><span class="field-desc">Descripción del motivo de escalamiento</span></div>
+<div class="field-row"><span class="field-name">accion_propuesta</span><span class="field-type">JSONB</span><span class="field-desc">Acciones recomendadas por el Asistente</span></div>
+<div class="field-row"><span class="field-name">estado</span><span class="field-type">ENUM</span><span class="field-desc">pendiente | resuelto | derivado_gerencia</span></div>
+<div class="field-row"><span class="field-name">decision_supervisor</span><span class="field-type">JSONB</span><span class="field-desc">Decisión tomada por el Supervisor</span></div>
+<div class="field-row"><span class="field-name">created_at</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">Timestamp automático</span></div>
+</div></div>
+</div>
+</div>
+<div class="sec">
+<h1 class="sh">2. Módulo 8 — Usuarios y Seguridad (desarrollar primero)</h1>
+<div class="info"><p><strong>Orden de desarrollo:</strong> Este módulo debe implementarse ANTES que cualquier otro. Todo el resto depende del sistema de autenticación y autorización.</p></div>
+
+<h2 class="sh2">2.1 Los 6 roles y permisos granulares</h2>
+<table>
+<tr><th>Rol</th><th>Scope de datos</th><th>Puede solicitar</th><th>Puede aprobar</th><th>Restricción técnica clave</th></tr>
+<tr><td><strong>asistente_operaciones</strong></td><td>WHERE gestor_id = self.id</td><td>Descuentos, escalamientos, cartas formales</td><td>Nada</td><td>NUNCA ve cartera de colegas ni métricas del equipo</td></tr>
+<tr><td><strong>supervisor_operaciones</strong></td><td>Todo el equipo, sin filtro gestor</td><td>Intensificaciones, derivar a GG</td><td>Cartas formales de cobro</td><td>No aprueba descuentos ni acuerdos formales</td></tr>
+<tr><td><strong>gerencia_general</strong></td><td>Vista global, solo lectura operativa</td><td>—</td><td>Descuentos, intensificaciones, acuerdos, inicio legal</td><td>No puede registrar gestiones ni promesas</td></tr>
+<tr><td><strong>juridico_interno</strong></td><td>Casos 100d+ y Portal Legal</td><td>Acuerdos formales (junto al Supervisor)</td><td>Nada sin Gerencia</td><td>Sin acceso a operaciones al día</td></tr>
+<tr><td><strong>administrador</strong></td><td>Configuración del sistema</td><td>—</td><td>—</td><td>Sin acceso a transacciones operativas</td></tr>
+<tr><td><strong>asesor_juridico_externo</strong></td><td>SOLO sus casos asignados explícitamente</td><td>—</td><td>—</td><td>Acceso vía portal separado, credenciales separadas</td></tr>
+</table>
+
+<h2 class="sh2">2.2 Autenticación JWT — flujo completo</h2>
+<div class="spec-box">
+<div class="spec-header dark">Flujo de autenticación</div>
+<div class="spec-body">
+<div class="flow-step"><div class="flow-dot" style="background:#1a5276;">1</div><div class="flow-content"><h4>POST /api/auth/login { email, password }</h4><p>Backend valida contra hash bcrypt en tabla usuarios. Si válido: genera access token (15 min) + refresh token (24h) con JTI único. Guarda JTI en Redis. Devuelve ambos tokens.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#1a5276;">2</div><div class="flow-content"><h4>Frontend: almacenar tokens en memoria (no localStorage)</h4><p>Access token en variable de estado React. Refresh token en httpOnly cookie. NUNCA en localStorage — viola LOPDP si hay XSS.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#1a5276;">3</div><div class="flow-content"><h4>Cada request: Authorization: Bearer {access_token}</h4><p>Backend valida firma JWT. Si válido: extrae user_id y role del payload. Verifica RBAC según el endpoint. Sin consulta a BD en cada request.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#0e6655;">4</div><div class="flow-content"><h4>Access token vencido: POST /api/auth/refresh</h4><p>Frontend envía refresh token automáticamente (interceptor Axios). Backend verifica JTI en Redis. Si válido: emite nuevo access token. Si no: sesión terminada, redirigir a login.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#c0392b;">5</div><div class="flow-content"><h4>Al desactivar usuario: invalidar sesión inmediatamente</h4><p>Administrador desactiva usuario → backend elimina todos los JTI de ese usuario en Redis → próxima llamada con refresh token falla → usuario queda fuera en segundos, sin esperar expiración natural.</p></div></div>
+</div></div>
+
+<h2 class="sh2">2.3 Middleware RBAC — implementación</h2>
+<p>Cada endpoint FastAPI usa el decorador <code>@require_role()</code>. El middleware extrae el rol del JWT y rechaza si no está en la lista de roles permitidos. Cada intento de acceso no autorizado se registra en la bitácora.</p>
+
+<h3 class="sh3">Matriz de permisos por endpoint</h3>
+<table>
+<tr><th>Endpoint</th><th>Asistente</th><th>Supervisor</th><th>Gerencia</th><th>Jurídico</th><th>Admin</th><th>Ext.Jur.</th></tr>
+<tr><td>GET /dashboard/asistente</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>GET /dashboard/supervisor</td><td>—</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>GET /dashboard/gerencia</td><td>—</td><td>—</td><td>✓</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>POST /gestiones</td><td>✓</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>POST /promesas</td><td>✓</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>POST /aprobaciones/{id}/solicitar</td><td>✓</td><td>✓</td><td>—</td><td>✓</td><td>—</td><td>—</td></tr>
+<tr><td>POST /aprobaciones/{id}/decidir</td><td>—</td><td>✓ (solo cartas)</td><td>✓</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>GET /escalamientos</td><td>—</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>GET /rendimiento-equipo</td><td>—</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>GET /portal-legal</td><td>—</td><td>✓ (lectura)</td><td>✓ (lectura)</td><td>✓</td><td>—</td><td>✓ (sus casos)</td></tr>
+<tr><td>GET /informe-directorio</td><td>—</td><td>—</td><td>✓</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>GET /usuarios, POST /usuarios</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✓</td><td>—</td></tr>
+<tr><td>GET /bitacora</td><td>—</td><td>—</td><td>✓</td><td>—</td><td>✓</td><td>—</td></tr>
+</table>
+
+<h2 class="sh2">2.4 Bitácora de auditoría — tabla inmutable</h2>
+<p>La bitácora registra TODA acción sensible. Se implementa como tabla PostgreSQL con RULE que bloquea UPDATE y DELETE. Nadie puede modificarla — ni el Administrador.</p>
+<p><strong>Acciones que SIEMPRE se registran:</strong> login exitoso, login fallido, logout, gestion_registrada, promesa_creada, aprobacion_solicitada, aprobacion_decidida, usuario_creado, usuario_desactivado, parametro_modificado, acceso_denegado, token_renovado, portal_legal_accedido.</p>
+</div>
+<div class="sec">
+<h1 class="sh">3. Módulo 1 — Dashboard y Control Operativo</h1>
+
+<div class="info"><p>El dashboard tiene <strong>tres vistas completamente distintas</strong> según el rol. No es el mismo dashboard con filtros — son endpoints distintos, queries distintas, componentes distintos. El frontend lee el rol del JWT y renderiza la vista correspondiente.</p></div>
+
+<h2 class="sh2">3.1 Vista Asistente — bandeja de trabajo</h2>
+<div class="screen-spec">
+<div class="screen-title">GET /api/dashboard/asistente · Rol: asistente_operaciones</div>
+<div class="screen-body">
+<h4 class="sh4">Fila 1: 4 KPI Cards</h4>
+<table>
+<tr><th>KPI</th><th>Query</th><th>Color alerta</th></tr>
+<tr><td>Ops asignadas</td><td>COUNT(*) WHERE gestor_id=:me</td><td>—</td></tr>
+<tr><td>Vencidas</td><td>COUNT(*) WHERE gestor_id=:me AND dias_vencidos &gt; 0</td><td>Rojo si &gt;0</td></tr>
+<tr><td>Por vencer 7d</td><td>COUNT(*) WHERE gestor_id=:me AND fecha_venc BETWEEN NOW() AND NOW()+7d</td><td>Ámbar si &gt;0</td></tr>
+<tr><td>USD administrado</td><td>SUM(saldo_pendiente) WHERE gestor_id=:me</td><td>—</td></tr>
+</table>
+<h4 class="sh4">Fila 2: Tabla de operaciones asignadas</h4>
+<p>Columnas: Cliente | Op.# | Estado (vence/vencida) | Monto | Tramo (badge) | Scoring IA | Prioridad | Última gestión | [Gestionar]</p>
+<p>Ordenación default: prioridad DESC, días_vencidos DESC. Borde izquierdo rojo = vencida. Borde ámbar = preventiva. Sin gestión 48h → badge naranja.</p>
+<p>El Asistente NUNCA ve operaciones de otros gestores. NUNCA ve el panel de rendimiento del equipo.</p>
+</div></div>
+
+<h2 class="sh2">3.2 Vista Supervisor — cartera del equipo</h2>
+<div class="screen-spec">
+<div class="screen-title">GET /api/dashboard/supervisor · Rol: supervisor_operaciones</div>
+<div class="screen-body">
+<h4 class="sh4">Diferencia técnica fundamental:</h4>
+<p>Asistente: <code>WHERE gestor_id = :me</code> &nbsp;|&nbsp; Supervisor: <strong>SIN filtro de gestor</strong>. Ve toda la cartera del equipo más el nombre del gestor asignado en cada fila.</p>
+<h4 class="sh4">6 KPI Cards (distintos a los del Asistente)</h4>
+<p>Total ops equipo · Vencidas equipo · Escalamientos pendientes · USD total equipo · Ops sin gestión 48h · Gestores activos</p>
+<h4 class="sh4">Tabla de operaciones del equipo</h4>
+<p>Mismas columnas del Asistente + columna <strong>Gestor</strong> (nombre) + botón <strong>Reasignar</strong>. El Supervisor puede acceder a cualquier gestión y reasignar operaciones.</p>
+<h4 class="sh4">Panel de rendimiento por gestor (único al Supervisor)</h4>
+<p>Tarjetas individuales por cada asistente del equipo. Ver sección 3.4 para detalle completo.</p>
+<h4 class="sh4">Cola de escalamientos (única al Supervisor)</h4>
+<p>Badge con count de escalamientos pendientes. Clic → pantalla de escalamientos. Ver sección 3.5.</p>
+</div></div>
+
+<h2 class="sh2">3.3 Vista Gerencia — KPIs ejecutivos</h2>
+<div class="screen-spec">
+<div class="screen-title">GET /api/dashboard/gerencia · Rol: gerencia_general</div>
+<div class="screen-body">
+<h4 class="sh4">Fila 1: 4 KPI Cards (ejecutivas)</h4>
+<p>% Cartera vencida (con flecha tendencia vs. mes anterior) · Total activo USD · % Recuperado del período anterior · USD en litigio (casos judiciales)</p>
+<h4 class="sh4">Fila 2: Barra de madurez de cartera (clickable por segmento)</h4>
+<p>Barra horizontal proporcional con 5 colores. Cada segmento clickable muestra las operaciones de ese tramo. Query: Canal 2 con window function SUM OVER() para calcular % en una sola query.</p>
+<p>Tramos: Al día+Preventiva (verde) · Vencida 0-10d (ámbar) · Vencida 11-30d (naranja) · Vencida 31-60d (rojo) · Vencida 61-90d (rojo oscuro)</p>
+<h4 class="sh4">Fila 3: Tendencia mensual (barras 6 meses)</h4>
+<p>% vencida al cierre de cada mes. Fuente: tabla <code>historico_kpis_mensuales</code> populada por job mensual.</p>
+<h4 class="sh4">Fila 4: Top 5 mayor exposición + Bandeja aprobaciones pendientes</h4>
+<p>Solo lectura. Gerencia NO puede registrar gestiones desde esta pantalla.</p>
+</div></div>
+
+<h2 class="sh2">3.4 Panel de rendimiento por gestor — solo Supervisor</h2>
+<table>
+<tr><th>Métrica</th><th>Fórmula</th><th>Alerta si</th><th>Fuente</th></tr>
+<tr><td>Score global (0-100)</td><td>Índice ponderado de las 5 métricas</td><td>&lt;60 rojo · 60-79 ámbar</td><td>Calculado en plataforma</td></tr>
+<tr><td>Gestiones/objetivo</td><td>gestiones_semana / objetivo_calculado</td><td>Ratio &lt;80%</td><td>Plataforma</td></tr>
+<tr><td>Contacto efectivo</td><td>gestiones SIN "sin_contacto" / total × 100</td><td>&lt;55%</td><td>Plataforma</td></tr>
+<tr><td>Frecuencia mínima</td><td>% ops que cumplen freq. requerida por tramo</td><td>&lt;75%</td><td>Plataforma</td></tr>
+<tr><td>Ops sin gestión 48h</td><td>COUNT ops WHERE last_gestion &gt;48h</td><td>Cualquier &gt;0</td><td>Canal 2</td></tr>
+<tr><td>Promesas cumplidas</td><td>promesas_cumplidas / promesas_total</td><td>&lt;60%</td><td>Plataforma</td></tr>
+<tr><td>Recuperado mes (USD)</td><td>Pagos registrados este mes por este gestor</td><td>—</td><td>Canal 2</td></tr>
+</table>
+<p>El objetivo de gestiones/semana se calcula dinámicamente: cada tramo requiere una frecuencia mínima distinta. Si el gestor tiene 3 ops en Media (2-3 gestiones/semana c/u) y 2 en Temprana (1/semana c/u), su objetivo semanal es 8-11 gestiones.</p>
+
+<h2 class="sh2">3.5 Cola de escalamientos — 4 tipos — solo Supervisor</h2>
+<p>Pantalla de dos paneles: lista izquierda (220px) + expediente derecho (flex). Selector de escalamiento actualiza el panel derecho.</p>
+
+<h4 class="sh4">Los 4 tipos y sus acciones disponibles</h4>
+<table>
+<tr><th>Tipo</th><th>¿Cómo llega?</th><th>Acción 1 (primaria)</th><th>Acción 2</th><th>Acción 3</th></tr>
+<tr><td><span class="badge bred">automatico_tramo</span></td><td>Job automático al cruzar 61d</td><td>Wizard de intensificación → derivar a GG</td><td>Reasignar gestor</td><td>Modificar propuesta</td></tr>
+<tr><td><span class="badge bamber">manual_evasion</span></td><td>Asistente marca "requiere_escalamiento"</td><td>Aprobar carta formal (Anexo 2)</td><td>Derivar a Gerencia</td><td>Reasignar gestor</td></tr>
+<tr><td><span class="badge bblue">alerta_frecuencia</span></td><td>Job automático al detectar 48h sin gestión</td><td>Alertar al gestor (prioridad)</td><td>Reasignar a otro gestor</td><td>Intervenir directamente</td></tr>
+<tr><td><span class="badge bpurple">anticipado_riesgo</span></td><td>Asistente escala anticipadamente</td><td>Orientar estrategia al gestor</td><td>Mantener en tramo actual</td><td>Escalar a tramo Media anticipado</td></tr>
+</table>
+
+<h4 class="sh4">Expediente en el panel derecho — secciones</h4>
+<ol style="margin:10px 0 10px 20px;font-size:12px;line-height:1.8;">
+<li><strong>Header:</strong> Cliente, Op.#, USD, días vencidos, Gestor asignado, badge de urgencia</li>
+<li><strong>Motivo del escalamiento:</strong> Texto explicativo (auto-generado o escrito por Asistente)</li>
+<li><strong>Historial reciente:</strong> Últimas 3 gestiones con tipo, fecha y resultado</li>
+<li><strong>Propuesta de acción:</strong> Lo que el Asistente recomienda (puede ser vacío)</li>
+<li><strong>Campo de comentario:</strong> El Supervisor puede añadir contexto a su decisión</li>
+<li><strong>Botones de acción:</strong> Según el tipo de escalamiento (ver tabla arriba)</li>
+</ol>
+
+<div class="warning"><p><strong>Regla de negocio crítica:</strong> Para tipo <code>automatico_tramo</code>, el botón "Derivar a Gerencia" NO envía directamente. Primero abre el wizard de 4 pasos de acciones de intensificación (ver sección 9.3). Solo al completar el wizard se genera la solicitud formal a Gerencia.</p></div>
+</div>
+<div class="sec">
+<h1 class="sh">4. Módulo 2 — Clasificación Automática de Cartera</h1>
+
+<h2 class="sh2">4.1 Motor de clasificación — 6 tramos y reglas</h2>
+<div class="info"><p>La clasificación ocurre: (1) al inicio de cada jornada (job nocturno), (2) cuando se registra un pago (webhook/polling), (3) bajo demanda al abrir el dashboard. El resultado NO se escribe en Cessio.Net — solo se almacena en la tabla <code>clasificacion_operaciones</code> de la plataforma, para uso operativo interno.</p></div>
+
+<table>
+<tr><th>Tramo</th><th>Días</th><th>Gestión requerida</th><th>Frecuencia mínima</th><th>Responsable</th><th>¿Escala auto?</th></tr>
+<tr><td><span class="badge bgreen">Preventiva</span></td><td>D-8 a D-0</td><td>Correo Anexo 1 + WhatsApp automático</td><td>—</td><td>Sistema automático</td><td>No</td></tr>
+<tr><td><span class="badge bblue">Temprana</span></td><td>1-30d</td><td>Llamadas + email + WhatsApp activo</td><td>1 contacto/semana mínimo</td><td>Asistente Op.</td><td>No</td></tr>
+<tr><td><span class="badge bamber">Media</span></td><td>31-60d</td><td>Gestión intensiva + carta formal</td><td>2-3 contactos/semana</td><td>Asistente + Supervisor</td><td>No</td></tr>
+<tr><td><span class="badge bred">Avanzada</span></td><td>61-90d</td><td>Contacto GG-GG + comunicación firmada</td><td>Contacto cada 3-5 días</td><td>Supervisor + Gerencia</td><td>Sí (al cruzar 61d)</td></tr>
+<tr><td><span class="badge" style="background:#fff0f0;color:#8B0000;">Intensificada</span></td><td>91-120d</td><td>Acuerdo formal de pago</td><td>Según plan de cuotas</td><td>Gerencia + Jurídico</td><td>No (requiere decisión GG)</td></tr>
+<tr><td><span class="badge bgray">Crítica/Legal</span></td><td>120d+</td><td>Acciones judiciales</td><td>Seguimiento estudio ext.</td><td>GG + Jurídico Ext.</td><td>No (requiere autorización GG)</td></tr>
+</table>
+
+<h4 class="sh4">Algoritmo de clasificación</h4>
+<div class="spec-box">
+<div class="spec-header">Función classify_operation(operacion_id)</div>
+<div class="spec-body">
+<div class="rule"><span class="rule-num">1.</span><span class="rule-text">Obtener la fecha de vencimiento más antigua entre todas las facturas de la operación (regla de múltiples facturas — ver 4.3)</span></div>
+<div class="rule"><span class="rule-num">2.</span><span class="rule-text">Calcular <code>dias_vencidos = MAX(0, CURRENT_DATE - fecha_vencimiento_mas_antigua)</code></span></div>
+<div class="rule"><span class="rule-num">3.</span><span class="rule-text">Si <code>dias_vencidos == 0 AND CURRENT_DATE &gt;= fecha_vencimiento - 8</code> → tramo = Preventiva</span></div>
+<div class="rule"><span class="rule-num">4.</span><span class="rule-text">Si <code>dias_vencidos &gt; 0</code> → aplicar rangos de la tabla anterior para asignar tramo</span></div>
+<div class="rule"><span class="rule-num">5.</span><span class="rule-text">Calcular prioridad interna (ver 4.2)</span></div>
+<div class="rule"><span class="rule-num">6.</span><span class="rule-text">Si tramo cambió a Avanzada (61d) y no existe escalamiento automático activo: crear registro en <code>escalamientos</code> con tipo=automatico_tramo</span></div>
+<div class="rule"><span class="rule-num">7.</span><span class="rule-text">Persistir resultado en <code>clasificacion_operaciones</code> (upsert por operacion_id)</span></div>
+</div></div>
+
+<h2 class="sh2">4.2 Sistema de prioridad interna — baja / media / alta</h2>
+<p>Dentro del mismo tramo, la prioridad ordena las operaciones en la bandeja del Asistente. Se recalcula con cada nueva gestión o evento relevante.</p>
+<table>
+<tr><th>Condición</th><th>Impacto en prioridad</th></tr>
+<tr><td>Primer día en el tramo</td><td>Prioridad BAJA (recién entró)</td></tr>
+<tr><td>2 gestiones sin contacto efectivo consecutivas</td><td>Prioridad MEDIA</td></tr>
+<tr><td>3+ gestiones sin contacto efectivo</td><td>Prioridad ALTA</td></tr>
+<tr><td>Promesa incumplida</td><td>Prioridad ALTA inmediatamente</td></tr>
+<tr><td>Escalamiento anticipado activo</td><td>Prioridad ALTA independiente del tramo</td></tr>
+<tr><td>Contacto efectivo reciente (últimas 24h)</td><td>Mantiene prioridad actual (no sube)</td></tr>
+<tr><td>Pago parcial recibido</td><td>Baja a prioridad MEDIA</td></tr>
+</table>
+
+<h2 class="sh2">4.3 Regla de múltiples facturas por operación</h2>
+<div class="danger"><p><strong>Regla crítica:</strong> Una operación de factoring puede tener múltiples facturas con distintas fechas de vencimiento. El tramo de la operación se calcula usando la factura con mayor antigüedad (más días vencidos). Si la factura más antigua tiene 45 días, la operación clasifica en Media — aunque las otras facturas sean recientes.</p></div>
+<p>Implementación: en la query de clasificación, siempre usar <code>MIN(f.fecha_vencimiento)</code> para obtener la fecha de vencimiento más temprana del grupo de facturas de la operación.</p>
+</div>
+
+<div class="sec">
+<h1 class="sh">5. Módulo 3 — Gestión de Cobranza</h1>
+
+<h2 class="sh2">5.1 Formulario de registro de gestión</h2>
+<div class="screen-spec">
+<div class="screen-title">POST /api/gestiones · Roles: asistente_operaciones, supervisor_operaciones</div>
+<div class="screen-body">
+<h4 class="sh4">Campos del formulario (todos requeridos excepto notas)</h4>
+<table>
+<tr><th>Campo</th><th>Tipo UI</th><th>Valores válidos</th><th>Regla</th></tr>
+<tr><td>tipo</td><td>Select</td><td>llamada | email | whatsapp | visita | observacion</td><td>Requerido</td></tr>
+<tr><td>resultado</td><td>Select (dinámico)</td><td>Ver tabla abajo</td><td>Requerido</td></tr>
+<tr><td>notas</td><td>Textarea</td><td>Texto libre</td><td>Opcional · máx 2000 chars</td></tr>
+<tr><td>proxima_accion</td><td>Text</td><td>Descripción breve</td><td>Requerido</td></tr>
+<tr><td>fecha_proxima</td><td>DatePicker</td><td>Fecha futura</td><td>Requerido · no puede ser pasada</td></tr>
+</table>
+
+<h4 class="sh4">5 tipos de contacto y su lógica</h4>
+<table>
+<tr><th>Tipo</th><th>¿Cuenta como contacto al cliente?</th><th>Impacto en regla anti-hostigamiento</th></tr>
+<tr><td>llamada</td><td>Sí</td><td>Usa el cupo del día</td></tr>
+<tr><td>email</td><td>Sí</td><td>Usa el cupo del día</td></tr>
+<tr><td>whatsapp</td><td>Sí</td><td>Usa el cupo del día</td></tr>
+<tr><td>visita</td><td>Sí</td><td>Usa el cupo del día</td></tr>
+<tr><td>observacion</td><td>NO</td><td>NO usa el cupo — no aparece como contacto</td></tr>
+</table>
+
+<h4 class="sh4">5 resultados disponibles y branching logic</h4>
+<table>
+<tr><th>Resultado</th><th>Descripción</th><th>Acción automática post-registro</th></tr>
+<tr><td>contacto_efectivo</td><td>El cliente respondió y hubo conversación real</td><td>Actualiza historial · Recalcula prioridad · Sincroniza a Cessio.Net</td></tr>
+<tr><td>sin_contacto</td><td>No respondió / teléfono ocupado / buzón</td><td>Suma al contador de intentos fallidos · Sube prioridad si es el 3ro consecutivo</td></tr>
+<tr><td>prometio_pago</td><td>Cliente se comprometió a pagar en fecha específica</td><td><strong>→ Abre automáticamente el formulario de creación de promesa</strong> (Módulo 4)</td></tr>
+<tr><td>solicito_liquidacion</td><td>Cliente quiere conocer el total a pagar</td><td>→ Abre automáticamente el Motor Financiero (Módulo 5) con la operación pre-cargada</td></tr>
+<tr><td>requiere_escalamiento</td><td>El Asistente determina que el caso necesita atención del Supervisor</td><td>→ Abre formulario de escalamiento con motivo y acción propuesta</td></tr>
+</table>
+</div></div>
+
+<h2 class="sh2">5.2 Regla anti-hostigamiento — implementación técnica</h2>
+<div class="danger"><p><strong>Máximo 1 contacto por cliente por día.</strong> Se verifica ANTES de permitir el registro. Si el cliente ya fue contactado hoy, el formulario muestra el aviso y bloquea el envío. La excepción es el tipo 'observacion' que NO cuenta como contacto.</p></div>
+
+<div class="spec-box">
+<div class="spec-header red">Verificación de anti-hostigamiento</div>
+<div class="spec-body">
+<p><strong>Query de verificación (ejecutar al abrir el formulario y al momento de guardar):</strong></p>
+<p>Contar gestiones del día actual (DATE(created_at) = CURRENT_DATE) para ese cliente_id donde tipo != 'observacion'. Si COUNT &gt;= 1: bloquear y mostrar mensaje.</p>
+<p><strong>Casos edge:</strong></p>
+<ul class="cl dot">
+<li>Una operación vencida con 2 facturas del mismo cliente → cuenta como 1 contacto al cliente, no 2</li>
+<li>El Supervisor puede también contactar al cliente → también consume el cupo diario</li>
+<li>El sistema automático (WhatsApp preventivo D-8) también consume el cupo si aplica</li>
+<li>Las notificaciones automáticas de promesa incumplida SON contacto — verificar cupo antes de enviar</li>
+</ul>
+</div></div>
+
+<h2 class="sh2">5.3 Sincronización hacia Cessio.Net post-registro</h2>
+<p>Después de guardar la gestión en la plataforma, la operación se sincroniza hacia Cessio.Net en background (no bloquea al usuario). Si la sincronización falla: reintentos con backoff, log del error, alerta al Administrador si supera 4 intentos fallidos.</p>
+<table>
+<tr><th>Dato sincronizado</th><th>Endpoint Cessio.Net</th><th>Cuándo</th></tr>
+<tr><td>Registro de gestión</td><td>POST /operaciones/{id}/gestiones</td><td>Al guardar cualquier gestión tipo contacto</td></tr>
+<tr><td>Estado de promesa</td><td>POST /operaciones/{id}/promesas</td><td>Al crear promesa simple o acuerdo formal</td></tr>
+<tr><td>Estado operativo</td><td>PUT /operaciones/{id}/estado-gestion</td><td>Al escalar, formalizar acuerdo, iniciar legal</td></tr>
+</table>
+</div>
+
+<div class="sec">
+<h1 class="sh">6. Módulo 4 — Promesas y Acuerdos de Pago</h1>
+
+<h2 class="sh2">6.1 Promesa simple — ciclo completo</h2>
+<div class="screen-spec">
+<div class="screen-title">POST /api/promesas · tipo=simple</div>
+<div class="screen-body">
+<p>Se abre automáticamente cuando el resultado de una gestión es "prometio_pago". También puede crearse manualmente desde la ficha de la operación.</p>
+<h4 class="sh4">Campos del formulario</h4>
+<table>
+<tr><th>Campo</th><th>Tipo UI</th><th>Regla</th></tr>
+<tr><td>fecha_compromiso</td><td>DatePicker</td><td>Requerido · debe ser fecha futura</td></tr>
+<tr><td>monto_prometido</td><td>Number</td><td>Requerido · debe ser mayor que 0 · no puede superar el saldo pendiente</td></tr>
+<tr><td>notas</td><td>Textarea</td><td>Opcional · contexto adicional</td></tr>
+</table>
+<h4 class="sh4">Ciclo de vida de la promesa simple</h4>
+<div class="flow-step"><div class="flow-dot" style="background:#1a5276;">1</div><div class="flow-content"><h4>Creada: promesa.cumplida = NULL</h4><p>Se programa alerta interna para verificar el día de la fecha_compromiso.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#0e6655;">2a</div><div class="flow-content"><h4>Pago recibido antes o en la fecha → promesa.cumplida = TRUE</h4><p>El webhook de pago.registrado dispara la verificación. La promesa se cierra automáticamente. Señal positiva al scoring IA.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#c0392b;">2b</div><div class="flow-content"><h4>Fecha pasa sin pago → promesa.cumplida = FALSE</h4><p>Job nocturno verifica. Genera: alerta al Asistente, alerta al Supervisor si caso escalado, prioridad → ALTA, penalización scoring IA, escalamiento anticipado si corresponde.</p></div></div>
+</div></div>
+
+<h2 class="sh2">6.2 Acuerdo formal de pago — plan de cuotas</h2>
+<div class="screen-spec">
+<div class="screen-title">POST /api/promesas · tipo=acuerdo_formal · Requiere aprobación previa de Gerencia General</div>
+<div class="screen-body">
+<div class="warning"><p><strong>NUNCA se puede crear un acuerdo formal sin aprobación de Gerencia General registrada. El endpoint debe verificar que exista un registro en <code>aprobaciones</code> con tipo=acuerdo_pago y estado=aprobado para esa operación.</strong></p></div>
+<h4 class="sh4">Campos del formulario</h4>
+<table>
+<tr><th>Campo</th><th>Tipo UI</th><th>Regla</th></tr>
+<tr><td>cuotas</td><td>Array dinámico</td><td>Mínimo 2 cuotas · suma de cuotas = saldo total liquidado</td></tr>
+<tr><td>fecha de cada cuota</td><td>DatePicker por cuota</td><td>Fechas futuras en orden ascendente</td></tr>
+<tr><td>monto de cada cuota</td><td>Number por cuota</td><td>Mínimo USD 1 por cuota</td></tr>
+<tr><td>bloquear_nuevas_ops</td><td>Checkbox</td><td>Default: ON · configurable por Gerencia</td></tr>
+</table>
+<h4 class="sh4">Automatizaciones activas con el acuerdo</h4>
+<ul class="cl arr">
+<li>Recordatorio automático D-5 antes de cada cuota (email + WhatsApp al cliente)</li>
+<li>Alerta interna al Asistente D-2 antes de cada cuota</li>
+<li>Si cuota no se paga en la fecha: escalamiento automático al Supervisor</li>
+<li>Si 2 cuotas consecutivas incumplidas: Supervisor puede recomendar anulación del acuerdo a Gerencia</li>
+</ul>
+</div></div>
+
+<h2 class="sh2">6.3 Job nocturno de verificación de promesas</h2>
+<p>Ejecutar diariamente a las 00:05 (después de medianoche): buscar promesas con <code>cumplida = NULL AND fecha_compromiso &lt; CURRENT_DATE</code>. Para cada una: marcar como rota, generar eventos según el caso. También verificar cuotas de acuerdos formales.</p>
+</div>
+
+<div class="sec">
+<h1 class="sh">7. Módulo 5 — Motor Financiero</h1>
+
+<h2 class="sh2">7.1 Los 3 tipos de liquidación — fórmulas y validaciones</h2>
+
+<div class="g3">
+<div class="spec-box">
+<div class="spec-header green">Liquidación Ordinaria</div>
+<div class="spec-body">
+<p><strong>Cuándo:</strong> Pago en fecha de vencimiento o dentro del plazo pactado.</p>
+<p><strong>Fórmula:</strong><br>
+<code>descuento = monto_factura × (tasa / 100)</code><br>
+<code>iva = descuento × 0.15</code><br>
+<code>total = descuento + iva</code></p>
+<p>Sin cargos adicionales. Sin GAO. Tasa y monto desde Cessio.Net vía API.</p>
+</div></div>
+<div class="spec-box">
+<div class="spec-header amber">Liquidación Anticipada</div>
+<div class="spec-body">
+<p><strong>Cuándo:</strong> El cliente paga antes de la fecha de vencimiento pactada.</p>
+<p><strong>Fórmula:</strong><br>
+<code>descuento = monto × (tasa/100) × (dias_reales / dias_contratados)</code><br>
+<code>iva = descuento × 0.15</code><br>
+<code>total = descuento + iva</code></p>
+<p>dias_reales = días desde desembolso hasta pago. dias_contratados = días originales del contrato.</p>
+</div></div>
+<div class="spec-box">
+<div class="spec-header red">Liquidación Vencida</div>
+<div class="spec-body">
+<p><strong>Cuándo:</strong> Pago posterior a la fecha de vencimiento.</p>
+<p><strong>Fórmula:</strong><br>
+<code>descuento = monto_factura × (tasa/100)</code><br>
+<code>periodos = CEILING(dias_vencidos / 10)</code><br>
+<code>gao_adicional = 0.008 × monto_factura × periodos</code><br>
+<code>iva_gao = gao_adicional × 0.15</code><br>
+<code>total = descuento + gao_adicional + iva_gao</code><br>
+<code>— nota_descuento (si aprobada por GG)</code></p>
+</div></div>
+</div>
+
+<h2 class="sh2">7.2 Notas de descuento — flujo con aprobación GG</h2>
+<div class="flow-step"><div class="flow-dot" style="background:#1a5276;">1</div><div class="flow-content"><h4>Asistente calcula la liquidación vencida en el motor</h4><p>Ve el total con GAO. Puede hacer clic en "Solicitar nota de descuento" e ingresar el % propuesto.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#d4a017;">2</div><div class="flow-content"><h4>Se crea registro en aprobaciones tipo=nota_descuento estado=pendiente</h4><p>El payload incluye toda la liquidación calculada: descuento base, GAO, IVA, % nota propuesto, monto nota, total con nota. Gerencia ve todos estos datos al aprobar.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#6c3483;">3</div><div class="flow-content"><h4>Gerencia aprueba, modifica % o niega desde su bandeja</h4><p>Si aprueba: aprobaciones.estado = aprobado, firma digital registrada. Si modifica %: registra el % aprobado real. Si niega: Asistente liquida sin descuento.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#0e6655;">4</div><div class="flow-content"><h4>Motor aplica el descuento y dispara flujo Contifico</h4><p>El total final incluye el descuento aprobado. El POST a Contifico incluye el ID de aprobación como referencia auditora.</p></div></div>
+
+<h2 class="sh2">7.3 Orden de aplicación de abonos (pagos parciales)</h2>
+<div class="danger"><p><strong>Regla invariable:</strong> Los costos siempre se pagan ANTES que el capital. Nunca se reduce el capital si hay costos pendientes.</p></div>
+<p>Orden de aplicación: 1° GAO adicional → 2° IVA del GAO → 3° Descuento contractual (comisión) → 4° IVA del descuento → 5° Capital pendiente</p>
+</div>
+<div class="sec">
+<h1 class="sh">8. Módulo 6 — Notificaciones Automáticas</h1>
+
+<h2 class="sh2">8.1 Catálogo completo de notificaciones</h2>
+
+<h3 class="sh3">Notificaciones externas (al cliente)</h3>
+<table>
+<tr><th>#</th><th>Nombre</th><th>Trigger</th><th>Canal</th><th>Plantilla</th><th>¿Requiere aprobación?</th><th>Anti-hostigamiento</th></tr>
+<tr><td>1</td><td>Correo preventivo</td><td>Fecha_vencimiento - 8 días (job D-8)</td><td>Email</td><td>Anexo 1</td><td>No — automático</td><td>Sí — usa cupo del día</td></tr>
+<tr><td>2</td><td>WhatsApp preventivo</td><td>Fecha_vencimiento - 8 días (mismo job)</td><td>WA Business API</td><td>Plantilla BSP aprobada</td><td>No — automático</td><td>Sí — si el email ya usó el cupo, WA va al día siguiente</td></tr>
+<tr><td>3</td><td>Carta formal de cobro</td><td>Tramo Media (31-60d) + aprobación Jefe Op.</td><td>Email (PDF adjunto)</td><td>Anexo 2</td><td>Sí — Jefe Operaciones</td><td>Sí</td></tr>
+<tr><td>4</td><td>Alerta promesa incumplida</td><td>fecha_compromiso pasada + cumplida=FALSE</td><td>Email + WA</td><td>Plantilla interna</td><td>No — automático</td><td>Sí</td></tr>
+<tr><td>5</td><td>Comprobante de pago</td><td>Pago registrado (webhook pago.registrado)</td><td>Email + WA</td><td>Plantilla con número factura SRI</td><td>No — automático</td><td>No aplica (comprobante no es contacto de cobranza)</td></tr>
+</table>
+
+<h3 class="sh3">Notificaciones internas (al equipo CESFACT)</h3>
+<table>
+<tr><th>#</th><th>Nombre</th><th>Trigger</th><th>Destinatario</th><th>Canal</th></tr>
+<tr><td>1</td><td>Escalamiento automático 61d</td><td>Operación cruza 61 días vencidos</td><td>Supervisor asignado</td><td>Push app + Teams/Email</td></tr>
+<tr><td>2</td><td>Solicitud de aprobación pendiente</td><td>POST /aprobaciones (nuevo)</td><td>Jefe Op. o Gerencia según tipo</td><td>Push app + Teams/Email</td></tr>
+<tr><td>3</td><td>Alerta frecuencia mínima</td><td>48h sin gestión en op. activa</td><td>Asistente + Supervisor</td><td>Push app</td></tr>
+<tr><td>4</td><td>Promesa incumplida (interna)</td><td>Job nocturno, promesa rota</td><td>Asistente + Supervisor si escalado</td><td>Push app + Teams/Email</td></tr>
+<tr><td>5</td><td>Decisión de aprobación</td><td>Aprobador decide en su bandeja</td><td>Quien solicitó la aprobación</td><td>Push app + Teams/Email</td></tr>
+</table>
+
+<h2 class="sh2">8.2 Cola asíncrona — retry con backoff exponencial</h2>
+<div class="spec-box">
+<div class="spec-header dark">Tabla: cola_notificaciones</div>
+<div class="spec-body">
+<div class="field-row"><span class="field-name">id</span><span class="field-type">UUID PK</span><span class="field-desc">Identificador único</span></div>
+<div class="field-row"><span class="field-name">tipo</span><span class="field-type">ENUM</span><span class="field-desc">email | whatsapp | push_internal | teams</span></div>
+<div class="field-row"><span class="field-name">destinatario</span><span class="field-type">VARCHAR</span><span class="field-desc">Email, teléfono WA, user_id, o Teams webhook</span></div>
+<div class="field-row"><span class="field-name">plantilla_id</span><span class="field-type">VARCHAR</span><span class="field-desc">ID de la plantilla a usar</span></div>
+<div class="field-row"><span class="field-name">variables</span><span class="field-type">JSONB</span><span class="field-desc">Variables a sustituir en la plantilla {cliente, monto, fecha, nro_factura, etc.}</span></div>
+<div class="field-row"><span class="field-name">estado</span><span class="field-type">ENUM</span><span class="field-desc">pendiente | enviado | fallido | bloqueado_antihosting</span></div>
+<div class="field-row"><span class="field-name">intentos</span><span class="field-type">INTEGER DEFAULT 0</span><span class="field-desc">Contador de intentos de envío</span></div>
+<div class="field-row"><span class="field-name">max_intentos</span><span class="field-type">INTEGER DEFAULT 4</span><span class="field-desc">Al superar: estado=fallido + alerta al Admin</span></div>
+<div class="field-row"><span class="field-name">proximo_intento</span><span class="field-type">TIMESTAMPTZ</span><span class="field-desc">Calculado con backoff: 1s, 2s, 4s, 8s después de cada fallo</span></div>
+<div class="field-row"><span class="field-name">cliente_id</span><span class="field-type">VARCHAR</span><span class="field-desc">Para verificar anti-hostigamiento en notificaciones externas</span></div>
+</div></div>
+
+<p><strong>Antes de enviar cualquier notificación externa:</strong> verificar regla anti-hostigamiento. Si el cliente ya recibió 1 contacto hoy: marcar estado=bloqueado_antihosting y reprogramar para el día siguiente.</p>
+
+<h2 class="sh2">8.3 Plantillas — Anexo 1 y Anexo 2</h2>
+<div class="g2">
+<div class="spec-box">
+<div class="spec-header green">Anexo 1 — Correo preventivo (D-8)</div>
+<div class="spec-body">
+<p>Variables requeridas: <code>{nombre_cliente}</code>, <code>{numero_operacion}</code>, <code>{fecha_vencimiento}</code>, <code>{monto_pendiente}</code>, <code>{dias_restantes}</code>, <code>{datos_pago_cesfact}</code></p>
+<p>Asunto: "CESFACT · Recordatorio de vencimiento · Op. #{numero_operacion}"</p>
+<p>La plantilla debe almacenarse en la tabla <code>plantillas_notificacion</code> y ser editable por el Administrador sin redespliegue.</p>
+</div></div>
+<div class="spec-box">
+<div class="spec-header red">Anexo 2 — Carta formal de cobro (Media 31-60d)</div>
+<div class="spec-body">
+<p>Variables requeridas: <code>{nombre_cliente}</code>, <code>{ruc_cliente}</code>, <code>{numero_operacion}</code>, <code>{fecha_vencimiento}</code>, <code>{dias_vencidos}</code>, <code>{saldo_capital}</code>, <code>{gao_acumulado}</code>, <code>{iva_gao}</code>, <code>{total_adeudado}</code>, <code>{firma_jefe_operaciones}</code></p>
+<p>Se genera como PDF adjunto al email. Se usa librería como WeasyPrint o reportlab para generar el PDF desde la plantilla HTML.</p>
+<p>Requiere aprobación del Jefe de Operaciones antes de enviar. Tras la aprobación, el sistema envía automáticamente sin intervención adicional del Asistente.</p>
+</div></div>
+</div>
+</div>
+
+<div class="sec">
+<h1 class="sh">9. Módulo 7 — Flujos y Aprobaciones</h1>
+
+<h2 class="sh2">9.1 Los 5 tipos de aprobación — flujo completo y consecuencias</h2>
+
+<div class="spec-box">
+<div class="spec-header">Tipo 1: Carta formal de cobro</div>
+<div class="spec-body">
+<p><strong>Solicitante:</strong> Asistente de Operaciones &nbsp;|&nbsp; <strong>Aprobador:</strong> Jefe de Operaciones &nbsp;|&nbsp; <strong>Tramo:</strong> Media (31-60d)</p>
+<p><strong>Datos en payload_solicitud:</strong> operacion_id, cliente, dias_vencidos, saldo_pendiente, gao_acumulado, borrador_carta_pdf_url</p>
+<p><strong>Al APROBAR:</strong> generar PDF carta formal (Anexo 2) → encolar notificación email al cliente → marcar aprobacion.estado=aprobado → notificar al Asistente</p>
+<p><strong>Al NEGAR:</strong> notificar al Asistente con motivo → no se envía carta</p>
+<p><strong>Al MODIFICAR:</strong> Jefe puede editar el texto antes de aprobar → genera nuevo PDF → aprueba</p>
+</div></div>
+
+<div class="spec-box" style="margin-top:10px;">
+<div class="spec-header amber">Tipo 2: Nota de descuento</div>
+<div class="spec-body">
+<p><strong>Solicitante:</strong> Asistente de Operaciones &nbsp;|&nbsp; <strong>Aprobador:</strong> Gerencia General &nbsp;|&nbsp; <strong>Tramo:</strong> Cualquiera</p>
+<p><strong>Datos en payload_solicitud:</strong> operacion_id, tipo_liquidacion, dias_vencidos, descuento_base, gao_adicional, iva_gao, subtotal_cargos, pct_descuento_propuesto, monto_descuento, total_con_descuento, fundamento_texto</p>
+<p><strong>Al APROBAR:</strong> motor financiero aplica el descuento → POST a Contifico → comprobante al cliente → bitácora con firma digital</p>
+<p><strong>Al MODIFICAR:</strong> Gerencia puede cambiar el % de descuento → se recalcula el monto → se aprueba con el nuevo %</p>
+<p><strong>Al NEGAR:</strong> Asistente liquida sin descuento a tarifa completa</p>
+</div></div>
+
+<div class="spec-box" style="margin-top:10px;">
+<div class="spec-header red">Tipo 3: Acción de intensificación (requiere GG para algunas acciones)</div>
+<div class="spec-body">
+<p><strong>Solicitante:</strong> Jefe de Operaciones &nbsp;|&nbsp; <strong>Aprobador:</strong> Gerencia General &nbsp;|&nbsp; <strong>Tramo:</strong> Avanzada (61-90d)</p>
+<p><strong>Datos en payload_solicitud:</strong> historial_gestiones_resumen[], scoring_cliente, garantias_disponibles, acciones_propuestas[], acciones_requieren_gg (boolean por acción), fundamento, resultado_esperado</p>
+<p><strong>Acciones que SIEMPRE requieren aprobación GG:</strong> contacto_directo_gg (Gerente de CESFACT contacta al responsable financiero del cliente), comunicacion_firmada_gg (carta firmada por el Gerente General)</p>
+<p><strong>Acciones que NO requieren GG:</strong> solicitar_reunion, confirmar_situacion_financiera, levantar_info_garantias</p>
+<p><strong>Al APROBAR:</strong> notificar al Jefe de Operaciones para coordinar las acciones · caso marcado como "intensificación activa" · seguimiento cada 3-5 días</p>
+</div></div>
+
+<div class="spec-box" style="margin-top:10px;">
+<div class="spec-header" style="background:#6c3483;">Tipo 4: Acuerdo formal de pago</div>
+<div class="spec-body">
+<p><strong>Solicitantes:</strong> Jefe de Operaciones + Jurídico Interno &nbsp;|&nbsp; <strong>Aprobador:</strong> Gerencia General &nbsp;|&nbsp; <strong>Tramo:</strong> Intensificada (91-120d)</p>
+<p><strong>Datos en payload_solicitud:</strong> operacion_id, saldo_total_adeudado, plan_cuotas [{numero, fecha, monto}], fundamento_juridico, viabilidad_opinion_juridica, bloquear_nuevas_operaciones (boolean)</p>
+<p><strong>Al APROBAR:</strong> activar módulo de acuerdo formal (Módulo 4) · plan de cuotas activo · recordatorios automáticos programados · bloqueo de nuevas ops si configurado</p>
+</div></div>
+
+<div class="spec-box" style="margin-top:10px;">
+<div class="spec-header" style="background:#8B0000;">Tipo 5: Inicio de acción judicial (exclusivo GG)</div>
+<div class="spec-body">
+<p><strong>Solicitantes:</strong> Jefe de Operaciones + Jurídico Interno &nbsp;|&nbsp; <strong>Aprobador:</strong> Gerencia General ÚNICAMENTE &nbsp;|&nbsp; <strong>Tramo:</strong> Crítica (120d+)</p>
+<p><strong>Condiciones previas que deben verificarse antes de permitir esta solicitud:</strong></p>
+<ul class="cl arr">
+<li>Días vencidos &gt;= 120 (o escalamiento anticipado justificado)</li>
+<li>Gestiones extrajudiciales documentadas: mínimo 3 gestiones en cada tramo anterior</li>
+<li>Análisis del Asesor Legal con opinión de viabilidad de la acción judicial</li>
+<li>Existencia de garantías o activos ejecutables identificados</li>
+</ul>
+<p><strong>Datos en payload_solicitud:</strong> expediente_completo, analisis_juridico, estrategia_propuesta, garantias_ejecutables[], estimacion_costos, estimacion_tiempo_meses</p>
+<p><strong>Al APROBAR:</strong> activar el caso en Portal Legal Externo (Módulo 10) · asignar a estudio jurídico · registrar autorización con firma digital GG en bitácora</p>
+</div></div>
+
+<h2 class="sh2">9.2 Bandeja de aprobaciones — implementación de la pantalla</h2>
+<div class="screen-spec">
+<div class="screen-title">GET /api/aprobaciones?estado=pendiente · Vista para cada aprobador</div>
+<div class="screen-body">
+<p><strong>Diseño de dos paneles:</strong> lista izquierda (210px fija) + expediente derecho (flex:1). Al seleccionar item de la lista, el panel derecho muestra el detalle completo.</p>
+<h4 class="sh4">Lista izquierda — cada item muestra</h4>
+<ul class="cl dot">
+<li>Badge con tipo de aprobación y color distintivo</li>
+<li>Nombre del cliente</li>
+<li>Monto en juego y días vencidos</li>
+<li>Tiempo desde que se solicitó ("hace 2h")</li>
+<li>Badge de urgencia (Alta / Media / Baja)</li>
+</ul>
+<h4 class="sh4">Panel derecho — secciones para TODAS las aprobaciones</h4>
+<ol style="margin:8px 0 8px 18px;font-size:12px;line-height:1.9;">
+<li><strong>Header:</strong> cliente, Op.#, monto, días vencidos, solicitante, tiempo desde solicitud, badge urgencia</li>
+<li><strong>Fundamento técnico:</strong> texto libre del solicitante explicando por qué se solicita</li>
+<li><strong>Impacto de la decisión:</strong> qué pasa si se aprueba vs. si se niega (texto automático por tipo)</li>
+<li><strong>Detalle específico por tipo:</strong> tabla de liquidación (notas descuento), lista de acciones (intensificación), plan de cuotas (acuerdos), expediente legal (inicio legal)</li>
+<li><strong>Campo de condiciones/comentario:</strong> el aprobador puede añadir condiciones o motivo de negativa</li>
+<li><strong>Tres botones:</strong> APROBAR (verde, primario) · NEGAR (rojo, secundario) · MODIFICAR (gris, terciario)</li>
+</ol>
+<h4 class="sh4">Consecuencias automáticas post-decisión</h4>
+<p>Al hacer clic en APROBAR/NEGAR/MODIFICAR: registro inmutable en bitácora con firma digital, notificación al solicitante, acciones específicas del tipo (ver tabla sección 9.1). El sistema muestra un resumen de "acciones ejecutadas automáticamente" tras la decisión.</p>
+</div></div>
+
+<h2 class="sh2">9.3 Wizard de intensificación 61-90d — 4 pasos</h2>
+<div class="info"><p>Este wizard se activa cuando el Supervisor quiere derivar a Gerencia un caso del tramo Avanzada. No se puede saltar el wizard — la solicitud a Gerencia se genera solo al completar el paso 4.</p></div>
+<table>
+<tr><th>Paso</th><th>Pantalla</th><th>Lo que hace el usuario</th><th>Qué genera el sistema</th></tr>
+<tr><td><span class="badge bblue">Paso 1</span></td><td>Revisar caso</td><td>Lee el expediente completo: cliente, historial de gestiones del Asistente, scoring, garantías disponibles</td><td>Carga datos desde Cessio.Net Canal 1 + scoring desde Canal 2</td></tr>
+<tr><td><span class="badge bamber">Paso 2</span></td><td>Seleccionar acciones</td><td>Elige de la lista de acciones disponibles (checkboxes). El sistema muestra qué acciones requieren GG y cuáles no</td><td>Calcula dinámicamente si la solicitud requerirá aprobación de GG. Si NINGUNA acción requiere GG → saltar al Paso 4 directamente</td></tr>
+<tr><td><span class="badge bred">Paso 3</span></td><td>Solicitud a Gerencia (solo si hay acciones que requieran GG)</td><td>Revisa la "ayuda de memoria" auto-generada (expediente + acciones propuestas + resultado esperado). Puede editar el fundamento textual</td><td>Pre-genera el documento con todos los datos del caso. El Supervisor revisa y puede modificar antes de enviar</td></tr>
+<tr><td><span class="badge bgreen">Paso 4</span></td><td>Confirmar y enviar</td><td>Confirma las acciones a ejecutar y las que van a GG</td><td>Crea registro en aprobaciones (si aplica) · Notifica a GG · Registra en bitácora · Actualiza estado del escalamiento</td></tr>
+</table>
+</div>
+<div class="sec">
+<h1 class="sh">10. Módulo 9 — Integración Contifico (nuevo módulo)</h1>
+
+<h2 class="sh2">10.1 Flujo completo post-pago — 8 pasos automatizados</h2>
+<div class="info"><p><strong>Impacto:</strong> De 30-60 minutos manuales entre 2 personas a 60-90 segundos completamente automáticos. El único paso manual es que el Asistente registre el pago en Cessio.Net. Todo lo demás ocurre sin intervención.</p></div>
+
+<div class="flow-step"><div class="flow-dot" style="background:#0e6655;">1</div><div class="flow-content"><h4>Asistente registra pago en Cessio.Net [ÚNICO PASO MANUAL]</h4><p>Ingresa monto, forma de pago, fecha efectiva, adjunta comprobante bancario. Pressiona guardar en Cessio.Net.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#534AB7;">2</div><div class="flow-content"><h4>Cessio.Net dispara webhook → Make.com</h4><p>POST al endpoint de Make.com con payload del pago + firma HMAC-SHA256. Make.com verifica la firma ANTES de procesar (ver implementación en sección de webhooks).</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#534AB7;">3</div><div class="flow-content"><h4>Make.com verifica existencia de nota de descuento aprobada</h4><p>GET /api/aprobaciones?operacion_id={op_id}&tipo=nota_descuento&estado=aprobado. Si existe: incluye el monto y % en el payload Contifico. Si no: liquida sin descuento.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#D85A30;">4</div><div class="flow-content"><h4>POST a API Contifico con payload completo</h4><p>Incluye: tipo de documento, RUC cliente, items de la liquidación (descuento, GAO, IVA GAO, nota descuento si aplica), total, forma de pago, referencia de operación.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#D85A30;">5</div><div class="flow-content"><h4>Contifico registra asiento contable + emite factura electrónica SRI</h4><p>Contifico retorna: número de factura, clave de acceso SRI, estado de autorización. Si falla la autorización SRI: Make.com reintenta automáticamente (Contifico gestiona el ciclo SRI).</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#EF9F27;">6</div><div class="flow-content"><h4>Make.com genera comprobante de aplicación de pago</h4><p>Combina datos de la liquidación + número de factura SRI + datos de la transferencia del cliente. Genera el documento en el formato de plantilla de CESFACT.</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#EF9F27;">7</div><div class="flow-content"><h4>Envío al cliente — email + WhatsApp Business</h4><p>Email: asunto estándar + comprobante PDF adjunto + factura electrónica adjunta. WhatsApp: template BSP aprobado con variables {cliente, monto, numero_factura}. Regla anti-hostigamiento: NO aplica para comprobantes (no es contacto de cobranza).</p></div></div>
+<div class="flow-step"><div class="flow-dot" style="background:#1a5276;">8</div><div class="flow-content"><h4>Plataforma actualiza en paralelo</h4><p>(a) Recalcula scoring del cliente (señal positiva). (b) Cierra promesa activa si la había (cumplida=TRUE). (c) Actualiza KPIs del dashboard. (d) Notifica al Asistente: "Pago contabilizado - factura {nro} emitida".</p></div></div>
+
+<h2 class="sh2">10.2 Payload exacto a Contifico por tipo de liquidación</h2>
+
+<div class="spec-box">
+<div class="spec-header green">Payload — Liquidación Ordinaria</div>
+<div class="spec-body">
+<p>Items: 1 solo ítem = "Descuento CESFACT - Op.#{id}" por el valor del descuento contractual + IVA</p>
+<p>Campos: tipo=factura, cliente_ruc, items[], total, forma_pago, referencia, fecha_efectiva</p>
+</div></div>
+
+<div class="spec-box" style="margin-top:8px;">
+<div class="spec-header red">Payload — Liquidación Vencida con Nota de Descuento</div>
+<div class="spec-body">
+<p>Items: [Descuento CESFACT, GAO adicional (N períodos × 0.8%), IVA del GAO (15%), Nota de descuento ({pct}%) con valor negativo]</p>
+<p>Campo adicional obligatorio: aprobacion_descuento_id (referencia al registro de aprobación de GG)</p>
+<p>Total = descuento + gao + iva_gao - nota_descuento</p>
+</div></div>
+
+<h2 class="sh2">10.3 Consideraciones de error y recuperación</h2>
+<table>
+<tr><th>Escenario de fallo</th><th>Comportamiento</th><th>Acción</th></tr>
+<tr><td>Contifico no responde (timeout)</td><td>Make.com reintenta hasta 3 veces con backoff</td><td>Si 3 fallos: alerta al Administrador + cola de errores</td></tr>
+<tr><td>Error de autorización SRI</td><td>Contifico gestiona el ciclo → devuelve error</td><td>Make.com alerta al Asistente · requiere acción manual en Contifico</td></tr>
+<tr><td>Firma HMAC inválida en webhook</td><td>Make.com descarta silenciosamente</td><td>Log del intento fallido · no procesa nada</td></tr>
+<tr><td>Nota de descuento sin aprobación</td><td>Make.com detiene el flujo antes de llamar a Contifico</td><td>Notifica al Asistente: "Pendiente aprobación de GG"</td></tr>
+</table>
+</div>
+
+<div class="sec">
+<h1 class="sh">11. Módulo 10 — Portal Legal Externo (nuevo módulo)</h1>
+
+<h2 class="sh2">11.1 Vista del estudio jurídico externo</h2>
+<div class="screen-spec">
+<div class="screen-title">Portal Legal · Rol: asesor_juridico_externo · Solo sus casos asignados</div>
+<div class="screen-body">
+<div class="danger"><p><strong>Aislamiento de datos:</strong> El usuario del estudio externo SOLO puede ver los casos asignados explícitamente a ese estudio. La query SIEMPRE incluye <code>WHERE estudio_id = :current_user_estudio_id AND caso.activo = true</code>. Nunca puede ver datos financieros de otras operaciones.</p></div>
+
+<h4 class="sh4">Lista de casos asignados (pantalla principal)</h4>
+<table>
+<tr><th>Columna</th><th>Origen</th><th>Notas</th></tr>
+<tr><td>Cliente/Deudor</td><td>Cessio.Net · nombre del deudor</td><td>SIN mostrar datos financieros de CESFACT</td></tr>
+<tr><td>Operación #</td><td>Cessio.Net · operacion_id</td><td>Referencia para el expediente</td></tr>
+<tr><td>Etapa procesal actual</td><td>casos_legales.etapa_actual</td><td>Número (1-5) + nombre de la etapa</td></tr>
+<tr><td>Fecha última actualización</td><td>actualizaciones_caso.created_at MAX</td><td>"hace N días" · rojo si sin actualización &gt; umbral</td></tr>
+<tr><td>Próxima acción</td><td>actualizaciones_caso.proxima_accion</td><td>Texto libre de la última actualización</td></tr>
+<tr><td>Acción</td><td>—</td><td>Botón "Actualizar estado"</td></tr>
+</table>
+
+<h4 class="sh4">Formulario de actualización de etapa</h4>
+<table>
+<tr><th>Campo</th><th>Tipo</th><th>Regla</th></tr>
+<tr><td>etapa_actual</td><td>Select (5 opciones fijas)</td><td>Solo puede avanzar (no retroceder etapas)</td></tr>
+<tr><td>notas_actualizacion</td><td>Textarea</td><td>Requerido · mínimo 50 caracteres</td></tr>
+<tr><td>proxima_accion</td><td>Text</td><td>Requerido · descripción breve</td></tr>
+<tr><td>fecha_proxima_accion</td><td>DatePicker</td><td>Opcional · fecha esperada de próximo evento</td></tr>
+<tr><td>documentos_adjuntos</td><td>File upload múltiple</td><td>PDF únicamente · máx 10MB por archivo · máx 5 archivos por actualización</td></tr>
+</table>
+
+<h4 class="sh4">Las 5 etapas procesales (fijas, en orden)</h4>
+<p>① Calificación de la demanda &nbsp;→&nbsp; ② Notificación de partes &nbsp;→&nbsp; ③ Período probatorio &nbsp;→&nbsp; ④ Sentencia &nbsp;→&nbsp; ⑤ Ejecución</p>
+<p>El estudio no puede crear etapas adicionales ni saltarse etapas. El select de etapa solo muestra la etapa actual y las posteriores, nunca anteriores.</p>
+</div></div>
+
+<h2 class="sh2">11.2 Vista interna CESFACT — panel de supervisión judicial</h2>
+<div class="screen-spec">
+<div class="screen-title">GET /api/portal-legal/consolidado · Roles: juridico_interno, gerencia_general, supervisor_operaciones</div>
+<div class="screen-body">
+
+<h4 class="sh4">KPI cards del panel judicial</h4>
+<table>
+<tr><th>KPI</th><th>Cálculo</th></tr>
+<tr><td>Casos activos</td><td>COUNT(casos_legales WHERE activo=true)</td></tr>
+<tr><td>Con alerta de inactividad</td><td>COUNT(casos sin actualización &gt; umbral configurado)</td></tr>
+<tr><td>Estudios jurídicos activos</td><td>COUNT(DISTINCT estudio_id WHERE activo=true)</td></tr>
+<tr><td>Exposición total en litigio</td><td>SUM(casos_legales.monto_reclamado)</td></tr>
+</table>
+
+<h4 class="sh4">Tabla de todos los casos activos</h4>
+<table>
+<tr><th>Columna</th><th>Notas</th></tr>
+<tr><td>Cliente</td><td>Nombre + Op.# + Monto reclamado</td></tr>
+<tr><td>Estudio asignado</td><td>Nombre del estudio jurídico</td></tr>
+<tr><td>Etapa procesal</td><td>Nombre de etapa + indicador visual de progreso (5 círculos)</td></tr>
+<tr><td>Dots de progreso</td><td>5 círculos: completado=verde, actual=ámbar (rojo si alerta), futuro=gris</td></tr>
+<tr><td>Última actualización</td><td>"hace N días" en rojo si supera el umbral de inactividad</td></tr>
+<tr><td>Fecha autorización GG</td><td>Fecha en que Gerencia autorizó el inicio de la acción</td></tr>
+</table>
+
+<h4 class="sh4">Panel de detalle del caso (al hacer clic en una fila)</h4>
+<div class="g2">
+<div>
+<p><strong>Columna izquierda: Timeline de actualizaciones del estudio externo</strong></p>
+<ul class="cl dot">
+<li>Historial completo de actualizaciones, ordenado de más reciente a más antiguo</li>
+<li>Cada entrada: fecha, etapa al momento, notas de la actualización, documentos adjuntos</li>
+<li>Próxima acción declarada por el estudio</li>
+</ul>
+</div>
+<div>
+<p><strong>Columna derecha: Registro de autorización de GG</strong></p>
+<ul class="cl dot">
+<li>Fecha en que Gerencia autorizó</li>
+<li>Texto de la autorización: "Aprobado tras N días de gestión extrajudicial..."</li>
+<li>Datos del caso al momento de autorizar (días vencidos, monto, garantías)</li>
+<li>Firma digital de GG con timestamp inmutable</li>
+</ul>
+</div>
+</div>
+</div></div>
+
+<h2 class="sh2">11.3 Alertas de inactividad — configuración y disparo</h2>
+<div class="spec-box">
+<div class="spec-header">Tabla: configuracion_alertas_portal_legal</div>
+<div class="spec-body">
+<div class="field-row"><span class="field-name">caso_legal_id</span><span class="field-type">UUID FK</span><span class="field-desc">Caso al que aplica la configuración</span></div>
+<div class="field-row"><span class="field-name">dias_sin_actualizacion_alerta</span><span class="field-type">INTEGER DEFAULT 7</span><span class="field-desc">Días sin actualización que disparan la alerta. Configurable por el Jurídico Interno.</span></div>
+<div class="field-row"><span class="field-name">notificar_juridico_interno</span><span class="field-type">BOOLEAN DEFAULT TRUE</span><span class="field-desc">Enviar alerta interna al Jurídico Interno de CESFACT</span></div>
+<div class="field-row"><span class="field-name">notificar_estudio</span><span class="field-type">BOOLEAN DEFAULT TRUE</span><span class="field-desc">Enviar alerta al correo del estudio jurídico externo</span></div>
+</div></div>
+<p><strong>Job diario de verificación:</strong> para cada caso activo, calcular <code>CURRENT_DATE - MAX(actualizaciones.created_at::date)</code>. Si supera el umbral configurado: generar alertas. La alerta al estudio externo se envía a su email registrado. La alerta interna aparece en el dashboard del Jurídico Interno y en el KPI "Con alerta" de Gerencia.</p>
+
+<div class="spec-box" style="margin-top:12px;">
+<div class="spec-header dark">Tabla: casos_legales</div>
+<div class="spec-body">
+<div class="field-row"><span class="field-name">id</span><span class="field-type">UUID PK</span><span class="field-desc">ID único del caso legal</span></div>
+<div class="field-row"><span class="field-name">operacion_id</span><span class="field-type">VARCHAR</span><span class="field-desc">Referencia a Cessio.Net</span></div>
+<div class="field-row"><span class="field-name">estudio_id</span><span class="field-type">UUID FK→estudios_juridicos</span><span class="field-desc">Estudio al que está asignado</span></div>
+<div class="field-row"><span class="field-name">aprobacion_inicio_id</span><span class="field-type">UUID FK→aprobaciones</span><span class="field-desc">Aprobación de GG que autorizó el inicio</span></div>
+<div class="field-row"><span class="field-name">etapa_actual</span><span class="field-type">INTEGER 1-5</span><span class="field-desc">Etapa procesal actual</span></div>
+<div class="field-row"><span class="field-name">monto_reclamado</span><span class="field-type">DECIMAL(12,2)</span><span class="field-desc">Monto total reclamado en la demanda</span></div>
+<div class="field-row"><span class="field-name">activo</span><span class="field-type">BOOLEAN DEFAULT TRUE</span><span class="field-desc">FALSE cuando el caso se cierra (sentencia + ejecución completada)</span></div>
+<div class="field-row"><span class="field-name">fecha_inicio</span><span class="field-type">DATE</span><span class="field-desc">Fecha en que se inició la acción judicial</span></div>
+</div></div>
+</div>
+<div class="sec">
+<h1 class="sh">12. Inteligencia Artificial — 6 puntos de integración</h1>
+
+<div class="info"><p><strong>Principio de diseño:</strong> La IA amplifica el criterio del equipo, no lo reemplaza. Los resultados de IA son inputs para decisiones humanas — nunca decisiones automáticas sobre casos.</p></div>
+
+<h2 class="sh2">12.1 Scoring de comportamiento de pago</h2>
+<p><strong>Cuándo recalcular:</strong> Al registrar un pago (webhook), al registrar una promesa incumplida (job nocturno), al crear/cerrar una operación nueva. El resultado se guarda en tabla <code>scoring_clientes</code> y se lee desde el dashboard y el formulario de gestión.</p>
+
+<div class="spec-box">
+<div class="spec-header green">Query de scoring (Canal 2 — PostgreSQL directo)</div>
+<div class="spec-body">
+<p>La query calcula el score 0-100 por cliente usando los últimos 24 meses de historial:</p>
+<ul class="cl arr">
+<li><code>dias_retraso_prom</code>: promedio de días de retraso en pagos históricos (AVG de fecha_pago - fecha_vencimiento)</li>
+<li><code>pct_pagos_puntuales</code>: % de pagos realizados en la fecha pactada o antes</li>
+<li><code>promesas_rotas_12m</code>: COUNT de promesas con cumplida=FALSE en los últimos 12 meses</li>
+<li><code>otras_ops_vencidas</code>: COUNT de otras operaciones actualmente vencidas del mismo cliente</li>
+</ul>
+<p><strong>Fórmula del score:</strong> <code>GREATEST(0, LEAST(100, 100 - dias_retraso_prom * 2.0 - promesas_rotas_12m * 10.0 + pct_pagos_puntuales * 1.5))</code></p>
+</div></div>
+
+<h4 class="sh4">Perfiles de scoring</h4>
+<table>
+<tr><th>Score</th><th>Perfil</th><th>Color UI</th><th>Comportamiento típico</th></tr>
+<tr><td>80-100</td><td>Puntual</td><td>Verde</td><td>Paga siempre antes o en fecha. Raramente vence. Sin promesas rotas.</td></tr>
+<tr><td>55-79</td><td>Irregular</td><td>Ámbar</td><td>A veces se retrasa 5-15 días. Algunas promesas incumplidas.</td></tr>
+<tr><td>30-54</td><td>Frecuente</td><td>Naranja</td><td>Retrasos habituales 15-30 días. Múltiples promesas rotas.</td></tr>
+<tr><td>0-29</td><td>Crítico</td><td>Rojo</td><td>Retrasos graves. Promesas sistemáticamente incumplidas. Alto riesgo.</td></tr>
+</table>
+
+<h2 class="sh2">12.2 Predicción de mora pre-vencimiento (D-8 a D-0)</h2>
+<p>Solo se calcula para operaciones en período preventivo (D-8 a D-0). Da una probabilidad 0-100% de que la operación venza sin pago.</p>
+<p><strong>Primera versión (reglas ponderadas — implementar primero):</strong></p>
+<table>
+<tr><th>Factor</th><th>Peso</th><th>Señal</th></tr>
+<tr><td>Días de mora promedio histórico</td><td>40%</td><td>×2 por día de promedio histórico</td></tr>
+<tr><td>Promesas rotas últimos 12 meses</td><td>30%</td><td>+15pp por promesa rota</td></tr>
+<tr><td>Otras operaciones vencidas activas</td><td>20%</td><td>+10pp por op. vencida paralela</td></tr>
+<tr><td>Respondió correo preventivo D-8</td><td>10%</td><td>-15pp si el cliente respondió</td></tr>
+</table>
+<p><strong>Segunda versión (ML — implementar con 6-12 meses de datos):</strong> Modelo de clasificación binaria (sklearn RandomForest o XGBoost) entrenado con los datos históricos reales generados por la plataforma. El score ML reemplaza al score de reglas como parámetro en la misma query.</p>
+
+<h2 class="sh2">12.3 Asistente conversacional interno — prompts por rol</h2>
+<div class="info"><p>Implementar usando la API de Claude (claude-sonnet-4-20250514). El prompt del sistema incluye el rol del usuario y los datos relevantes de la plataforma. El asistente responde en lenguaje natural con datos reales.</p></div>
+<table>
+<tr><th>Rol</th><th>Ejemplos de consultas</th><th>Contexto a incluir en el prompt</th></tr>
+<tr><td>Asistente Op.</td><td>"¿Cuáles son mis operaciones vencidas hoy?" · "¿Cuántas gestiones hice esta semana?" · "¿Cuál cliente tiene el score más bajo?"</td><td>gestiones del usuario, promesas activas, ops asignadas, scoring de sus clientes</td></tr>
+<tr><td>Supervisor</td><td>"¿Qué asistente tiene más cartera sin gestión?" · "¿Cuántos escalamientos están pendientes?" · "¿Qué clientes tienen más promesas rotas?"</td><td>datos de todo el equipo, escalamientos pendientes, rendimiento por gestor</td></tr>
+<tr><td>Gerencia</td><td>"Prepara el resumen ejecutivo del mes" · "¿Cuánto recuperamos en abril vs. marzo?" · "¿Cuál es el caso judicial más antiguo?"</td><td>KPIs globales, historial mensual, casos judiciales, aprobaciones pendientes</td></tr>
+</table>
+<div class="warning"><p><strong>Nunca incluir en el prompt:</strong> contraseñas, tokens, claves de API, datos de acceso al sistema. El contexto debe ser solo datos de negocio.</p></div>
+
+<h2 class="sh2">12.4 Narrativa automática del Informe de Directorio</h2>
+<p>Se llama a la API de Claude con un prompt estructurado que incluye todos los KPIs del período. El resultado (párrafo ejecutivo 120-150 palabras) se pre-llena en el informe y Gerencia puede editarlo antes de aprobar.</p>
+<div class="spec-box">
+<div class="spec-header dark">Estructura del prompt para la narrativa</div>
+<div class="spec-body">
+<p><strong>System:</strong> "Eres el asistente de análisis de cartera de CESFACT (Cessio Factoring Cía. Ltda.), empresa de factoring ecuatoriana."</p>
+<p><strong>User:</strong> Incluir todos los valores siguientes:<br>
+- Cartera total activa: USD {total_activo}<br>
+- % cartera vencida: {pct_vencida}% (vs. {pct_vencida_mes_anterior}% el mes anterior)<br>
+- Desglose por tramo: 0-10d:{pct_0_10}% / 11-30d:{pct_11_30}% / 31-60d:{pct_31_60}% / 61-90d:{pct_61_90}%<br>
+- Recuperado del período anterior: {pct_recuperado}% (USD {monto_recuperado})<br>
+- Casos judiciales: {count_judicial} por USD {total_judicial}<br>
+- Promesas cumplidas: {promesas_cumplidas} de {promesas_total}<br>
+- CONTEXTO: 90-95% de la cartera es revolving. Los retrasos de 0-10d son comportamiento normal en ese segmento.<br>
+<br>
+Genera: párrafo ejecutivo 120-150 palabras. Tono ejecutivo, objetivo, sin alarmismo. Contextualiza el % vencido. Solo prosa continua. Responde ÚNICAMENTE con el párrafo.</p>
+</div></div>
+</div>
+<div class="sec">
+<h1 class="sh">13. Integración API REST con Cessio.Net — Especificación completa</h1>
+
+<h2 class="sh2">13.1 Endpoints de lectura (GET desde Cessio.Net)</h2>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/clientes/{id}</h4><p>Datos básicos: nombre, RUC, teléfono, email, representante legal, dirección. Usar: al cargar ficha de cliente en formulario de gestión.</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/clientes/{id}/historial-pagos</h4><p>Historial de pagos de todas las operaciones del cliente. Usar: para cálculo de scoring IA (complemento al Canal 2).</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/operaciones?estado={estado}&cliente={id}&gestor={id}&vencimiento_desde={date}&vencimiento_hasta={date}</h4><p>Lista filtrada de operaciones. Usar: cuando no hay acceso Canal 2 o para refresh específico de un subset de datos.</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/operaciones/{id}</h4><p>Detalle de operación: monto original, tasa pactada, tipo de operación, fechas de contrato y vencimiento, estado actual. Usar: al abrir el motor financiero para una operación específica.</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/operaciones/{id}/facturas</h4><p>Lista de facturas de la operación: número, monto, saldo pendiente, estado, fecha vencimiento individual. Usar: para detectar la factura con mayor antigüedad (regla de clasificación 4.3).</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/operaciones/{id}/saldo</h4><p>Saldo vigente al momento de la consulta: capital, intereses acumulados, GAO acumulado, IVA pendiente, total. Usar: SIEMPRE antes de calcular una liquidación — consultar en tiempo real.</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/operaciones/{id}/pagos</h4><p>Historial de pagos de esta operación: fecha, monto, forma de pago, quien registró. Usar: para verificar si una promesa fue cumplida y para el historial en el expediente.</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/operaciones/{id}/movimientos</h4><p>Todos los eventos: desembolso, aplicaciones de pago, traslados, descuentos históricos. Usar: para mostrar el historial completo en el expediente del caso.</p></div></div>
+<div class="endpoint"><span class="method mget">GET</span><div class="ep-right"><h4>/operaciones/{id}/garantias</h4><p>Garantías asociadas: tipo (pagaré, garantía personal), monto, estado, firmante. Usar: en el wizard de intensificación para incluir en la ayuda de memoria a Gerencia.</p></div></div>
+
+<h2 class="sh2">13.2 Endpoints de escritura (POST/PUT hacia Cessio.Net) — Fase 4</h2>
+<div class="danger"><p><strong>TODAS las escrituras deben:</strong> (1) incluir Idempotency-Key único por operación, (2) registrarse en la bitácora antes y después, (3) implementar retry con backoff exponencial, (4) manejar errores de forma que NO dupliquen datos en Cessio.Net.</p></div>
+
+<div class="endpoint"><span class="method mpost">POST</span><div class="ep-right"><h4>/operaciones/{id}/gestiones</h4><p>Payload: {tipo, resultado, notas, proxima_accion, fecha_proxima, gestor_id, idempotency_key}. Trigger: inmediatamente después de guardar la gestión en la plataforma (background task).</p></div></div>
+<div class="endpoint"><span class="method mpost">POST</span><div class="ep-right"><h4>/operaciones/{id}/promesas</h4><p>Payload: {fecha_compromiso, monto_prometido, tipo, gestor_id}. Trigger: al crear una promesa simple o al aprobar un acuerdo formal.</p></div></div>
+<div class="endpoint"><span class="method mpost">POST</span><div class="ep-right"><h4>/operaciones/{id}/intereses</h4><p>Payload: {tipo_liquidacion, descuento, gao_adicional, iva_gao, dias_reales, calculado_en}. Trigger: al completar el cálculo en el motor financiero y el Asistente confirma.</p></div></div>
+<div class="endpoint"><span class="method mpost">POST</span><div class="ep-right"><h4>/operaciones/{id}/descuentos</h4><p>Payload: {monto, pct, aprobado_por, aprobacion_id, aprobado_en, condicion}. Trigger: cuando Gerencia aprueba una nota de descuento en la plataforma.</p></div></div>
+<div class="endpoint"><span class="method mput">PUT</span><div class="ep-right"><h4>/operaciones/{id}/estado-gestion</h4><p>Payload: {estado, motivo, fecha, autorizado_por}. Estados válidos: en_gestion, acuerdo_activo, en_legal, promesa_activa, promesa_rota. Trigger: al escalar, al formalizar acuerdo, al iniciar acciones legales.</p></div></div>
+</div>
+
+<div class="sec">
+<h1 class="sh">14. Acceso PostgreSQL Directo — Queries Analíticas (Canal 2)</h1>
+
+<h2 class="sh2">14.1 Query de madurez de cartera (Informe Directorio + Dashboard Gerencia)</h2>
+<p>Usa window function SUM OVER() para calcular el % de cada tramo sobre el total en una sola query. Esta query es imposible de replicar eficientemente vía API. Tiempo estimado de ejecución: 8-15ms.</p>
+<div class="spec-box">
+<div class="spec-header dark">QUERY_MADUREZ_CARTERA</div>
+<div class="spec-body">
+<p>SELECT: tramo (calculado con CASE WHEN sobre días vencidos), COUNT de operaciones, SUM de saldo_pendiente, ROUND(SUM(saldo) × 100.0 / SUM(SUM(saldo)) OVER (), 2) AS pct_cartera</p>
+<p>FROM: operaciones JOIN (subquery facturas: saldo_pendiente = SUM(monto - pagado) WHERE estado != 'pagada')</p>
+<p>WHERE: operaciones.estado NOT IN ('pagada', 'anulada')</p>
+<p>GROUP BY: tramo | ORDER BY: MIN(CURRENT_DATE - fecha_vencimiento)</p>
+</div></div>
+
+<h2 class="sh2">14.2 Query de scoring por cliente</h2>
+<p>JOINs sobre 3 tablas + 24 meses de historial. Versión simplificada sin SQL literal para evitar errores de parsing — usar esta especificación para generar el query:</p>
+<table>
+<tr><th>Campo calculado</th><th>Fórmula SQL</th></tr>
+<tr><td>dias_retraso_prom</td><td>AVG(pagos.fecha_pago - operaciones.fecha_vencimiento) — permite negativo (días de adelanto)</td></tr>
+<tr><td>pct_pagos_puntuales</td><td>COUNT(*) FILTER (WHERE pagos.fecha_pago &lt;= operaciones.fecha_vencimiento) * 100.0 / NULLIF(COUNT(pagos.id), 0)</td></tr>
+<tr><td>promesas_rotas_12m</td><td>COUNT(promesas_pago.id) FILTER (WHERE cumplida = false AND fecha_creacion &gt;= NOW()-12months)</td></tr>
+<tr><td>scoring</td><td>ROUND(GREATEST(0, LEAST(100, 100 - dias_retraso_prom * 2.0 - promesas_rotas_12m * 10.0 + pct_pagos_puntuales * 1.5)), 0)</td></tr>
+</table>
+
+<h2 class="sh2">14.3 Query de predicción de mora (D-8)</h2>
+<p>CTE que primero construye el historial por cliente, luego aplica el modelo de reglas a las operaciones que vencen en los próximos 8 días:</p>
+<table>
+<tr><th>Paso del CTE</th><th>Descripción</th></tr>
+<tr><td>historial_cliente (CTE)</td><td>Por cliente: AVG días mora, COUNT promesas rotas 12m, COUNT otras ops vencidas activas</td></tr>
+<tr><td>Consulta principal</td><td>operaciones WHERE fecha_vencimiento BETWEEN hoy AND hoy+8d AND estado='al_dia'</td></tr>
+<tr><td>Probabilidad mora</td><td>LEAST(95, GREATEST(5, dias_mora_prom*2 + promesas_rotas_12m*15 + otras_ops_vencidas*10))</td></tr>
+<tr><td>Ordenación</td><td>ORDER BY probabilidad DESC — prioriza los de mayor riesgo</td></tr>
+</table>
+
+<h2 class="sh2">14.4 Query de KPIs globales (Dashboard Gerencia y Supervisor)</h2>
+<p>Una sola query devuelve todos los KPIs usando FILTER clauses (PostgreSQL nativo). Estimado: 8-12ms para toda la cartera.</p>
+<table>
+<tr><th>KPI</th><th>Cláusula SQL</th></tr>
+<tr><td>cartera_total_usd</td><td>SUM(facturas.saldo_pendiente)</td></tr>
+<tr><td>cartera_vencida_usd</td><td>SUM(saldo) FILTER (WHERE dias_vencidos &gt; 0)</td></tr>
+<tr><td>pct_vencida</td><td>ROUND(cartera_vencida / NULLIF(cartera_total, 0) * 100, 2)</td></tr>
+<tr><td>ops_preventivas</td><td>COUNT(*) FILTER (WHERE dias_vencidos BETWEEN -8 AND 0)</td></tr>
+<tr><td>recuperado_mes_usd</td><td>SUM(pagos.monto) FILTER (WHERE pagos.fecha_pago &gt;= DATE_TRUNC('month', CURRENT_DATE))</td></tr>
+</table>
+</div>
+
+<div class="sec">
+<h1 class="sh">15. Sistema de Webhooks — 6 eventos y cadenas de reacción</h1>
+
+<h2 class="sh2">15.1 Catálogo de eventos</h2>
+<table>
+<tr><th>Evento</th><th>Trigger en Cessio.Net</th><th>Urgencia</th><th>Reacciones de la plataforma</th></tr>
+<tr><td><strong>pago.registrado</strong></td><td>INSERT en tabla pagos</td><td><span class="badge bred">Crítico</span></td><td>Flujo Contifico completo · Comprobante al cliente · Scoring recalculado · Promesa cerrada · KPIs actualizados</td></tr>
+<tr><td><strong>operacion.nueva</strong></td><td>Op. aprobada y desembolsada</td><td><span class="badge bblue">Normal</span></td><td>Clasificación automática · Asignación a gestor · Programar D-8</td></tr>
+<tr><td><strong>operacion.vencida</strong></td><td>Fecha vencimiento alcanzada</td><td><span class="badge bamber">Alta</span></td><td>Reclasificación a Temprana · Alerta al Asistente · Scoring penalizado</td></tr>
+<tr><td><strong>abono.parcial.registrado</strong></td><td>Pago que no liquida la operación</td><td><span class="badge bblue">Normal</span></td><td>Saldo recalculado · Contabilización parcial · Comprobante de abono</td></tr>
+<tr><td><strong>estado.actualizado</strong></td><td>Estado de op. cambia en Cessio.Net</td><td><span class="badge bgray">Baja</span></td><td>Dashboard actualizado · Bitácora · Reclasificación si aplica</td></tr>
+<tr><td><strong>promesa.fecha_pasada</strong></td><td>Job nocturno (no viene de Cessio.Net)</td><td><span class="badge bred">Crítico</span></td><td>Alerta Asistente · Prioridad → Alta · Penalización scoring · Alerta Supervisor</td></tr>
+</table>
+
+<h2 class="sh2">15.2 Opciones de implementación (decidir en Fase 1)</h2>
+<div class="g3">
+<div class="spec-box">
+<div class="spec-header green">Opción A — HTTP Webhook</div>
+<div class="spec-body">
+<p><strong>Latencia:</strong> &lt;1 segundo</p>
+<p><strong>Cessio.Net necesita:</strong> Sistema de webhook HTTP saliente (POST a URL configurable)</p>
+<p><strong>Verificación de autenticidad:</strong> HMAC-SHA256 en header X-Cessio-Signature</p>
+<p><strong>Si la plataforma está caída:</strong> El webhook puede perderse. Cessio.Net debe reintentar o la plataforma debe implementar polling de recuperación.</p>
+<p><strong>Recomendación:</strong> Opción primaria si Cessio.Net la soporta</p>
+</div></div>
+<div class="spec-box">
+<div class="spec-header purple">Opción B — PG LISTEN/NOTIFY</div>
+<div class="spec-body">
+<p><strong>Latencia:</strong> &lt;100ms</p>
+<p><strong>Cessio.Net necesita:</strong> Trigger en tablas clave que ejecute NOTIFY</p>
+<p><strong>Plataforma necesita:</strong> Proceso persistente con asyncpg escuchando el canal. Si se cae: reconectar y revisar lo que se perdió.</p>
+<p><strong>Ventaja:</strong> El NOTIFY ocurre dentro del commit. Garantía de entrega si la plataforma está conectada.</p>
+<p><strong>Recomendación:</strong> Mejor opción técnica si se puede añadir triggers en Cessio.Net</p>
+</div></div>
+<div class="spec-box">
+<div class="spec-header">Opción C — Polling periódico</div>
+<div class="spec-body">
+<p><strong>Latencia:</strong> 2-5 minutos</p>
+<p><strong>Cessio.Net necesita:</strong> Solo GET /operaciones?modified_since={timestamp} (API estándar)</p>
+<p><strong>Implementación:</strong> Celery beat o Cloud Scheduler ejecuta el job cada 2-5 minutos</p>
+<p><strong>Ventaja:</strong> Nunca pierde eventos. No requiere modificar Cessio.Net.</p>
+<p><strong>Desventaja:</strong> Lag de 2-5 min en el flujo Contifico. Aceptable para la mayoría de casos.</p>
+<p><strong>Recomendación:</strong> Fallback siempre disponible</p>
+</div></div>
+</div>
+
+<h2 class="sh2">15.3 Verificación HMAC-SHA256 (Opción A)</h2>
+<p>Implementar en el receptor de webhooks. Antes de procesar cualquier payload:</p>
+<p>1. Extraer firma del header: <code>X-Cessio-Signature: sha256={hash_hex}</code></p>
+<p>2. Calcular HMAC del body raw con el secreto compartido: <code>hmac.new(secret.encode(), body_bytes, hashlib.sha256).hexdigest()</code></p>
+<p>3. Comparar usando <code>hmac.compare_digest()</code> (evita timing attacks)</p>
+<p>4. Si no coincide: responder 401 y registrar en log. Si coincide: responder 200 inmediatamente y procesar en background.</p>
+<div class="warning"><p><strong>Responder 200 ANTES de procesar.</strong> Si la plataforma tarda en responder, Cessio.Net puede hacer un retry. Siempre: aceptar primero, procesar en background.</p></div>
+</div>
+
+<div class="sec">
+<h1 class="sh">16. Plan de Fases de Desarrollo — Orden y Dependencias</h1>
+
+<div class="phase-bar">
+<div class="phase-step" style="background:#0d3349;"><div class="pn">1</div><div class="pl">Semanas 1-2<br>Setup y Validación</div></div>
+<div class="phase-step" style="background:#1a5276;"><div class="pn">2</div><div class="pl">Semanas 3-6<br>Núcleo Operativo</div></div>
+<div class="phase-step" style="background:#1a7a6e;"><div class="pn">3</div><div class="pl">Semanas 7-9<br>Comunicaciones</div></div>
+<div class="phase-step" style="background:#0e6655;"><div class="pn">4</div><div class="pl">Semanas 10-11<br>Motor + Aprobaciones</div></div>
+<div class="phase-step" style="background:#2ECC71;"><div class="pn">5</div><div class="pl">Semanas 12-15<br>Go-Live</div></div>
+</div>
+
+<h2 class="sh2">Fase 1 — Semanas 1-2: Setup y validación técnica</h2>
+<table>
+<tr><th>Actividad</th><th>Responsable</th><th>Entregable</th><th>Bloqueante si falla</th></tr>
+<tr><td>Validar API Cessio.Net (endpoints, auth, rate limits, esquemas)</td><td>Dev backend + Ref. Técnico CESFACT</td><td>Documento de API validada con ejemplos reales</td><td>Sí — toda la integración depende</td></tr>
+<tr><td>Probar acceso Canal 2 (PostgreSQL de solo lectura)</td><td>Dev backend</td><td>Usuario cesfact_analytics funcional con 5 queries de prueba</td><td>Sí — dashboards y scoring dependen</td></tr>
+<tr><td>Confirmar opción de webhook (A, B o C)</td><td>Dev backend + Ref. Técnico Cessio.Net</td><td>Decisión documentada con prueba de concepto</td><td>No — polling siempre disponible como fallback</td></tr>
+<tr><td>Provisionar ambientes dev/QA/prod</td><td>Dev ops</td><td>3 ambientes Docker funcionando</td><td>Sí — necesario para desarrollar</td></tr>
+<tr><td>Confirmar acceso API Contifico + entorno de pruebas</td><td>CESFACT Contabilidad</td><td>Credenciales de sandbox Contifico</td><td>Sí para Fase 4</td></tr>
+</table>
+
+<h2 class="sh2">Fase 2 — Semanas 3-6: Núcleo operativo (Módulos 1, 2, 3, 8)</h2>
+<table>
+<tr><th>Módulo</th><th>Integración activada</th><th>Criterio de aceptación</th></tr>
+<tr><td>M8 — Usuarios y Seguridad</td><td>—</td><td>Login con JWT, 6 roles funcionando, RBAC verificado en 10 endpoints</td></tr>
+<tr><td>M2 — Clasificación automática</td><td>Canal 2 (query madurez)</td><td>Clasificación correcta de 20 operaciones de prueba en los 6 tramos</td></tr>
+<tr><td>M1 — Dashboard Asistente</td><td>Canal 1 + Canal 2</td><td>Dashboard muestra solo ops del Asistente logueado con KPIs correctos</td></tr>
+<tr><td>M1 — Dashboard Supervisor</td><td>Canal 1 + Canal 2</td><td>Dashboard muestra toda la cartera del equipo + panel de rendimiento</td></tr>
+<tr><td>M1 — Dashboard Gerencia</td><td>Canal 2 (madurez)</td><td>Barra de madurez correcta con % calculados desde Canal 2</td></tr>
+<tr><td>M3 — Gestión cobranza</td><td>Canal 1 (escritura Fase 2: solo log)</td><td>Formulario guarda en plataforma · regla anti-hostigamiento funciona · branching logic correcto</td></tr>
+</table>
+
+<h2 class="sh2">Fase 3 — Semanas 7-9: Comunicaciones y Promesas (Módulos 4, 6)</h2>
+<table>
+<tr><th>Módulo</th><th>Integraciones</th><th>Criterio de aceptación</th></tr>
+<tr><td>M4 — Promesas y acuerdos</td><td>Escritura Canal 1 (promesas)</td><td>Promesa simple: ciclo completo. Acuerdo: requiere aprobación GG antes de activar</td></tr>
+<tr><td>M6 — Notificaciones</td><td>SMTP + WhatsApp BSP</td><td>Email D-8 enviado en prueba · WhatsApp enviado · cola asíncrona con retry funcionando</td></tr>
+<tr><td>M6 — Anti-hostigamiento</td><td>—</td><td>Segundo intento del día bloqueado correctamente para cualquier tipo de contacto</td></tr>
+</table>
+
+<h2 class="sh2">Fase 4 — Semanas 10-11: Motor financiero, aprobaciones, writeback (Módulos 5, 7)</h2>
+<table>
+<tr><th>Módulo</th><th>Integraciones</th><th>Criterio de aceptación</th></tr>
+<tr><td>M5 — Motor financiero</td><td>Canal 1 escritura (intereses, descuentos)</td><td>3 tipos de liquidación calculan correctamente · resultado se escribe en Cessio.Net</td></tr>
+<tr><td>M7 — Aprobaciones</td><td>—</td><td>5 tipos de aprobación funcionan · decisiones registradas con firma digital · acciones automáticas post-decisión correctas</td></tr>
+<tr><td>M9 — Contifico</td><td>Webhook + API Contifico</td><td>Pago registrado en Cessio.Net → factura emitida en Contifico → comprobante al cliente · tiempo &lt;2 minutos</td></tr>
+<tr><td>M10 — Portal Legal</td><td>—</td><td>Estudio externo puede actualizar etapas · CESFACT ve panel consolidado · alertas de inactividad funcionan</td></tr>
+</table>
+
+<h2 class="sh2">Fase 5 — Semanas 12-15: Go-live</h2>
+<p>Pruebas integrales con datos reales de CESFACT (datos anonimizados en QA). Capacitación por rol (2 sesiones de 2h cada una). Piloto acompañado en producción. Go-live formal. Garantía de 90 días activa desde la aceptación.</p>
+
+<div class="info"><p><strong>Para el desarrollador:</strong> Cada módulo tiene tests de aceptación en este documento. Antes de presentar un módulo como "listo", verificar que todos los criterios de aceptación de su fase pasan con datos de prueba reales. El Product Owner de CESFACT debe estar disponible para validar los entregables de cada fase.</p></div>
+</div>
+</div>
+<footer>
+  <p><strong>CESSIO FACTORING CÍA. LTDA. · CESFACT</strong> — Plataforma de Automatización de Cobranza</p>
+  <p style="margin-top:6px;">Guía Técnica de Desarrollo · JPADigital Solutions / Transformación ExO · Juan Carlos Alzate G. · Mayo 2026</p>
+  <p style="margin-top:6px;">Documento confidencial de uso interno del equipo de desarrollo. No distribuir sin autorización de CESFACT.</p>
+</footer>
+</body>
+</html>
